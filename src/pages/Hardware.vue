@@ -23,7 +23,7 @@ const initialFilters = {
   tipo_equipo_id_tipo: '',
   marca: '',
   fecha_mantenimiento: '',
-  version_SO: '', // Changed from version_so
+  version_SO: '',
   responsable: '',
   estado: '',
 };
@@ -31,7 +31,7 @@ const filters = ref({ ...initialFilters });
 const filterOptions = ref({
   tipos: [],
   marcas: [],
-  versiones_so: [], // This should match the backend response key
+  versiones_so: [],
   responsables: [],
   estados: [],
 });
@@ -40,7 +40,7 @@ const filterOptions = ref({
 const showFormModal = ref(false);
 const isEditing = ref(false);
 const currentItem = ref({});
-const itemToDelete = ref(null); // Used to trigger the delete modal
+const itemToDelete = ref(null);
 
 // --- Computed property for the page subtitle ---
 const pageSubtitle = computed(() => {
@@ -60,7 +60,7 @@ const tableColumns = ref([
   { key: 'modelo', label: 'Model' },
   { key: 'serie', label: 'Serial' },
   { key: 'fecha_mantenimiento', label: 'Maintenance' },
-  { key: 'version_so', label: 'OS Version' }, // Keep this as version_so since that's what the backend returns
+  { key: 'version_so', label: 'OS Version' },
   { key: 'responsable', label: 'Responsible' },
   { key: 'costo', label: 'Cost' },
   { key: 'estado', label: 'State' },
@@ -84,7 +84,6 @@ async function fetchHardware() {
 async function fetchFilterOptions() {
   try {
     const { data } = await apiClient.get('/hardware/filters');
-    // The backend returns versiones_so, not version_so
     filterOptions.value = data;
   } catch (err) {
     console.error('Failed to load filter options:', err);
@@ -127,7 +126,7 @@ async function handleConfirmDelete() {
     error.value = 'Failed to delete hardware item.';
     console.error(err);
   } finally {
-    itemToDelete.value = null; // Close the modal
+    itemToDelete.value = null;
   }
 }
 
@@ -139,11 +138,11 @@ function showCreateForm() {
     modelo: '',
     serie: '',
     fecha_mantenimiento: new Date().toISOString().split('T')[0],
-    version_SO: '', // Changed from version_so
+    version_SO: '',
     responsable: '',
     costo: 0.00,
     estado: 'Activo',
-    tipo_equipo_id_tipo: 1
+    tipo_equipo_id_tipo: filterOptions.value.tipos[0]?.id_tipo || 1
   };
   showFormModal.value = true;
   error.value = '';
@@ -152,10 +151,11 @@ function showCreateForm() {
 function showEditForm(item) {
   isEditing.value = true;
   const editableItem = { ...item };
-  editableItem.version_SO = item.version_so;
   if (editableItem.fecha_mantenimiento) {
     editableItem.fecha_mantenimiento = new Date(item.fecha_mantenimiento).toISOString().split('T')[0];
   }
+  // Ensure we have the correct field name for the type
+  editableItem.tipo_equipo_id_tipo = item.tipo_equipo_id_tipo;
   currentItem.value = editableItem;
   showFormModal.value = true;
   error.value = '';
@@ -255,6 +255,14 @@ onMounted(() => {
       @save="handleSave"
       @close="cancelForm"
     >
+      <div class="form-group">
+        <label for="tipo_equipo_id_tipo">Type</label>
+        <select id="tipo_equipo_id_tipo" v-model="currentItem.tipo_equipo_id_tipo" required>
+          <option v-for="tipo in filterOptions.tipos" :key="tipo.id_tipo" :value="tipo.id_tipo">
+            {{ tipo.tipo }}
+          </option>
+        </select>
+      </div>
       <div class="form-group">
         <label for="marca">Brand</label>
         <input id="marca" v-model="currentItem.marca" required />

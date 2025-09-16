@@ -20,7 +20,8 @@
 }
 
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group textarea {
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
@@ -49,7 +50,6 @@
   align-items: flex-end;
 }
 
-/* REMOVED flex-grow and flex-basis */
 .filter-group {
   display: flex;
   flex-direction: column;
@@ -61,11 +61,18 @@
   color: #555;
 }
 
-/* ADDED this rule to give inputs a nice default width */
 .filter-group select,
 .filter-group input {
   width: 200px;
   padding: 8px;
   border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+}
+
+/* Add specific styling for the hardware type dropdown */
+.form-group select#tipo_equipo_id_tipo {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 8px;
   border-radius: var(--border-radius);
 }
