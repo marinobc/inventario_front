@@ -22,13 +22,15 @@ const router = createRouter({
       path: '/hardware',
       name: 'hardware',
       component: Hardware,
-      meta: { requiresAuth: true, permission: (store) => store.canAccessHardwareModule }
+      meta: { requiresAuth: true, permission: (store) => store.permissions.hardware?.canAccessModule }
     },
     {
       path: '/users',
       name: 'users',
       component: Users,
-      meta: { requiresAuth: true, permission: (store) => store.canViewUsersPage }
+      // UPDATED: The specific permission check is removed.
+      // Any authenticated user can now access this route.
+      meta: { requiresAuth: true }
     },
     {
       path: '/profile',
@@ -40,6 +42,8 @@ const router = createRouter({
   ]
 });
 
+// The router.beforeEach guard does not need any changes.
+// It will correctly handle the updated meta property for the /users route.
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore();
   
@@ -61,16 +65,8 @@ router.beforeEach(async (to, from, next) => {
   if (to.meta.permission) {
     const hasPermission = to.meta.permission(authStore);
 
-    // --- MORE DETAILED DEBUG LOGS ---
-    console.log('--- ROUTER GUARD DEBUG (V2) ---');
-    console.log('Checking permission for path:', to.path);
-    // This trick prints the raw data inside the reactive Proxy object
-    console.log('Current user state:', JSON.parse(JSON.stringify(authStore.user)));
-    console.log('Permission check result:', hasPermission);
-    // ---------------------------------
-
     if (!hasPermission) {
-      console.warn(`Access denied to "${to.path}". User does not have required permission.`);
+      console.warn(`Access denied to "${to.path}". User does not have required permission according to backend.`);
       return next({ name: 'dashboard' });
     }
   }

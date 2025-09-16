@@ -1,0 +1,37 @@
+/* Import all other style modules */
+@import './layout.css';
+@import './forms.css';
+@import './tables.css';
+@import './buttons.css';
+@import './alerts.css';
+@import './navbar.css';
+@import './login.css';
+@import './modal.css';
+
+/* Define CSS variables for consistent theming */
+:root {
+  --color-primary: #007bff;
+  --color-primary-hover: #0056b3;
+  --color-secondary: #6c757d;
+  --color-secondary-hover: #5a6268;
+  --color-danger: #e74c3c;
+  --color-danger-hover: #c0392b;
+  --color-success: #27ae60;
+  --color-text-light: #ffffff;
+  --color-text-dark: #333;
+  --color-background-light: #f4f4f9;
+  --color-border: #ddd;
+  --border-radius: 4px;
+}
+
+/* Global styles */
+body {
+  font-family: sans-serif;
+  margin: 0;
+  background-color: var(--color-background-light);
+  color: var(--color-text-dark);
+}
+
+* {
+  box-sizing: border-box;
+}

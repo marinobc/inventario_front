@@ -1,0 +1,27 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+}
+
+.nav-links a, .nav-user a {
+  color: white;
+  text-decoration: none;
+  margin-right: 15px;
+}
+
+.nav-links a:hover, .nav-user a:hover {
+  text-decoration: underline;
+}
+
+.nav-user {
+  display: flex;
+  align-items: center;
+}
+
+.nav-user span {
+  margin-right: 15px;
+}

@@ -1,15 +1,18 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth';
+import PageWrapper from '@/components/common/PageWrapper.vue';
 const authStore = useAuthStore();
 </script>
 
 <template>
-  <div>
-    <h1>My Profile</h1>
+  <PageWrapper title="My Profile">
     <div v-if="authStore.user">
       <p><strong>ID:</strong> {{ authStore.user.id }}</p>
       <p><strong>Username:</strong> {{ authStore.user.username }}</p>
       <p><strong>Scope:</strong> {{ authStore.user.scope_name }}</p>
-      </div>
-  </div>
+    </div>
+    <div v-else>
+      <p>Loading profile...</p>
+    </div>
+  </PageWrapper>
 </template>

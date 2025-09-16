@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
+import BaseButton from '@/components/common/BaseButton.vue';
 
 const authStore = useAuthStore();
 const username = ref('');
@@ -30,50 +31,8 @@ async function handleSubmit() {
         <label for="password">Password</label>
         <input type="password" id="password" v-model="password" required>
       </div>
-      <button type="submit">Login</button>
+      <BaseButton type="submit">Login</BaseButton>
       <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
     </form>
   </div>
 </template>
-
-<style scoped>
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-.login-form {
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  background: white;
-  width: 300px;
-}
-.form-group {
-  margin-bottom: 20px;
-}
-label {
-  display: block;
-  margin-bottom: 5px;
-}
-input {
-  width: 100%;
-  padding: 8px;
-  box-sizing: border-box;
-}
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.error-message {
-  color: red;
-  margin-top: 15px;
-  text-align: center;
-}
-</style>

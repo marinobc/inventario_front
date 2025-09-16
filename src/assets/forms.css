@@ -1,0 +1,71 @@
+/* Form Container */
+.item-form-container {
+  background-color: #f9f9f9;
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+}
+
+.form-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Filter Bar */
+.filter-container {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: var(--border-radius);
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.filter-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+/* REMOVED flex-grow and flex-basis */
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  font-size: 0.85em;
+  margin-bottom: 4px;
+  color: #555;
+}
+
+/* ADDED this rule to give inputs a nice default width */
+.filter-group select,
+.filter-group input {
+  width: 200px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+}
