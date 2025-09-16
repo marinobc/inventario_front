@@ -23,7 +23,7 @@ const initialFilters = {
   tipo_equipo_id_tipo: '',
   marca: '',
   fecha_mantenimiento: '',
-  version_SO: '', // Change to match backend
+  version_SO: '', // Changed from version_so
   responsable: '',
   estado: '',
 };
@@ -60,7 +60,7 @@ const tableColumns = ref([
   { key: 'modelo', label: 'Model' },
   { key: 'serie', label: 'Serial' },
   { key: 'fecha_mantenimiento', label: 'Maintenance' },
-  { key: 'version_so', label: 'OS Version' },
+  { key: 'version_so', label: 'OS Version' }, // Keep this as version_so since that's what the backend returns
   { key: 'responsable', label: 'Responsible' },
   { key: 'costo', label: 'Cost' },
   { key: 'estado', label: 'State' },
@@ -139,7 +139,7 @@ function showCreateForm() {
     modelo: '',
     serie: '',
     fecha_mantenimiento: new Date().toISOString().split('T')[0],
-    version_SO: '',
+    version_SO: '', // Changed from version_so
     responsable: '',
     costo: 0.00,
     estado: 'Activo',
@@ -152,6 +152,7 @@ function showCreateForm() {
 function showEditForm(item) {
   isEditing.value = true;
   const editableItem = { ...item };
+  editableItem.version_SO = item.version_so;
   if (editableItem.fecha_mantenimiento) {
     editableItem.fecha_mantenimiento = new Date(item.fecha_mantenimiento).toISOString().split('T')[0];
   }
@@ -209,7 +210,7 @@ onMounted(() => {
         </div>
         <div class="filter-group">
           <label for="filter-version_SO">OS Version</label>
-          <select id="filter-version_so" v-model="filters.version_SO">
+          <select id="filter-version_SO" v-model="filters.version_SO">
             <option value="">All</option>
             <option v-for="ver in filterOptions.versiones_so" :key="ver" :value="ver">{{ ver }}</option>
           </select>
@@ -272,7 +273,7 @@ onMounted(() => {
       </div>
       <div class="form-group">
         <label for="version_SO">OS Version</label>
-        <input id="version_so" v-model="currentItem.version_so" required />
+        <input id="version_SO" v-model="currentItem.version_SO" required />
       </div>
       <div class="form-group">
         <label for="fecha_mantenimiento">Maintenance Date</label>
