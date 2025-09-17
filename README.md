@@ -1,117 +1,206 @@
-# Sistema de Gestión de Inventario - Frontend
+# Frontend - Sistema de Gestión de Inventario
 
-Este documento ofrece una visión completa de la aplicación frontend en Vue.js para el Sistema de Gestión de Inventario. Está dirigido a desarrolladores que deban mantener o extender la aplicación.
+## Tabla de Contenidos
 
-## 📋 Tabla de Contenidos
+- [Descripción General](#descripción-general)
+- [Arquitectura y Tecnologías](#arquitectura-y-tecnologías)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Funcionalidades Principales](#funcionalidades-principales)
+- [Sistema de Autenticación y Autorización](#sistema-de-autenticación-y-autorización)
+- [Componentes Principales](#componentes-principales)
+- [Gestión de Estado](#gestión-de-estado)
+- [Manejo de API](#manejo-de-api)
+- [Instalación y Ejecución](#instalación-y-ejecución)
 
-* [Resumen](#-resumen)
-* [Conceptos Clave y Arquitectura](#-conceptos-clave-y-arquitectura)
-  * [Flujo de Autenticación](#flujo-de-autenticación)
-  * [Gestión de Estado (Pinia)](#gestión-de-estado-pinia)
-  * [Permisos y Control de Acceso Basado en Roles (RBAC)](#permisos-y-control-de-acceso-basado-en-roles-rbac)
-* [Estructura del Proyecto](#-estructura-del-proyecto)
-* [🚀 Primeros Pasos: Configuración del Entorno de Desarrollo](#-primeros-pasos-configuración-del-entorno-de-desarrollo)
-* [🛠️ Cómo Agregar un Nuevo Módulo de Departamento](#️-cómo-agregar-un-nuevo-módulo-de-departamento)
-* [Dependencia del Backend](#-dependencia-del-backend)
+## Descripción General
 
+Este proyecto es una aplicación frontend desarrollada con Vue.js 3 para gestionar inventario de hardware y usuarios. La aplicación ofrece un sistema completo de autenticación, autorización basada en permisos, y interfaces para administrar equipos de hardware y usuarios del sistema.
 
+## Arquitectura y Tecnologías
 
-## 📖 Resumen
+- **Framework**: Vue.js 3 (Composition API)
+- **Enrutamiento**: Vue Router 4
+- **Gestión de Estado**: Pinia
+- **HTTP Client**: Axios
+- **Build Tool**: Vite
+- **Estilos**: CSS modular con variables CSS
+- **Lenguaje**: JavaScript ES6+
 
-Se trata de una aplicación moderna de una sola página (SPA) construida con **Vue 3**, **Vite**, **Pinia** y **Vue Router**. Proporciona una interfaz para gestionar activos de la empresa, comenzando con el inventario de hardware y la gestión de usuarios. La aplicación cuenta con un sólido sistema de control de acceso basado en roles (RBAC), que adapta la experiencia del usuario según su rol y departamento.
-
-### Funcionalidades Principales
-
-* **Autenticación Segura**: Sistema de inicio de sesión que establece una sesión segura con el backend.
-* **Navegación Dinámica**: La barra de navegación muestra solo los módulos permitidos para el usuario.
-* **Acceso Basado en Roles**: Los elementos de la interfaz (botones como “Agregar”, “Editar”, “Eliminar”) y páginas completas se renderizan de forma condicional según los permisos del usuario.
-* **Módulo de Inventario de Hardware**: Interfaz CRUD (Crear, Leer, Actualizar, Eliminar) para gestionar activos de hardware, con capacidad de filtrado.
-* **Módulo de Gestión de Usuarios**: Interfaz CRUD para gestionar cuentas de usuario, con lógica de permisos que restringe acciones (por ejemplo, un Gerente solo puede gestionar usuarios de su propio departamento).
-
-
-## 🏛️ Conceptos Clave y Arquitectura
-
-### Flujo de Autenticación
-
-1. El usuario ingresa sus credenciales en la **página de Login** (`src/pages/Login.vue`).
-2. La acción `login` en el **store de auth** (`src/stores/auth.js`) envía la solicitud al backend (`/api/auth/login`).
-3. Si es exitoso, el backend devuelve una cookie de sesión. El servicio `api.js` está configurado con `withCredentials: true` para enviarla en cada petición.
-4. Luego, la aplicación ejecuta `checkSession()` para obtener los datos del usuario y almacenarlos en el estado de Pinia.
-5. El **router** (`src/router/index.js`) utiliza un guard `beforeEach` para proteger rutas, verificando autenticación y permisos definidos en `meta`.
-
-### Gestión de Estado (Pinia)
-
-El estado global (usuario y autenticación) se maneja en el **store de auth** (`src/stores/auth.js`):
-
-* `user`: Contiene los datos del usuario autenticado (ID, nombre, rol, departamento).
-* `isAuthenticated`: Propiedad computada que indica si existe un usuario autenticado.
-* **Permisos Computados**: Propiedades reactivas (`canAccessHardwareModule`, `canEditUser`, etc.) que definen permisos de forma sencilla.
-
-### Permisos y Control de Acceso Basado en Roles (RBAC)
-
-El sistema de permisos se define en `src/stores/auth.js` y depende de dos atributos:
-
-* **Rol (Scope)**: Nivel de rol del usuario (ej. ‘Owner’, ‘Manager’, ‘Employee’).
-* **Departamento**: Área asignada al usuario (ej. ‘Hardware’, ‘Ventas’).
-
-Los permisos se aplican en:
-
-1. **UI (Plantillas)**: Con directivas `v-if` basadas en permisos del store.
-2. **Router**: Usando `meta.permission` en cada ruta y validado por el guard de navegación.
-
-## 📁 Estructura del Proyecto
-
-La carpeta `src` está organizada para mantener el código modular y ordenado:
+## Estructura del Proyecto
 
 ```
 src/
-├── components/      # Componentes reutilizables (ej. Navbar)
-├── pages/           # Páginas principales (una por ruta)
-├── router/          # Configuración de Vue Router y guards
-├── services/        # Capa de comunicación con API (Axios)
-├── stores/          # Stores de Pinia (ej. auth)
-├── App.vue          # Shell principal de la app
-└── main.js          # Punto de entrada de la aplicación
+├── assets/           # Estilos y recursos
+│   ├── main.css      # Estilos principales y variables CSS
+│   ├── layout.css    # Estilos de layout
+│   ├── forms.css     # Estilos de formularios
+│   ├── tables.css    # Estilos de tablas
+│   ├── buttons.css   # Estilos de botones
+│   ├── alerts.css    # Estilos de alertas
+│   ├── navbar.css    # Estilos de navegación
+│   ├── login.css     # Estilos de login
+│   └── modal.css     # Estilos de modales
+├── components/       # Componentes reutilizables
+│   ├── common/       # Componentes base
+│   │   ├── AlertMessage.vue
+│   │   ├── BaseButton.vue
+│   │   ├── BaseModal.vue
+│   │   ├── ConfirmDeleteModal.vue
+│   │   ├── DataTable.vue
+│   │   ├── ModalForm.vue
+│   │   └── PageWrapper.vue
+│   ├── Navbar.vue    # Barra de navegación
+│   └── IdleTimeoutModal.vue  # Modal de timeout
+├── pages/            # Componentes de página
+│   ├── Dashboard.vue
+│   ├── Hardware.vue
+│   ├── Login.vue
+│   ├── Profile.vue
+│   └── Users.vue
+├── router/           # Configuración de rutas
+│   └── index.js
+├── services/         # Servicios de API
+│   └── api.js
+├── stores/           # Stores de Pinia
+│   └── auth.js
+└── main.js           # Punto de entrada
 ```
 
+## Funcionalidades Principales
 
-## 🚀 Primeros Pasos: Configuración del Entorno de Desarrollo
+### 1. Autenticación y Gestión de Sesión
+- Login/logout de usuarios
+- Verificación de sesión activa
+- Timeout automático por inactividad
+- Heartbeat para mantener sesión activa
 
-### Requisitos Previos
+### 2. Gestión de Hardware
+- Listado de equipos con filtros avanzados
+- Creación, edición y eliminación de equipos
+- Filtros por tipo, marca, estado, responsable, etc.
+- Validación de permisos por usuario
 
-* **Node.js**: Se requiere una versión reciente ser recomienda la version ltsc (`22.19.0`).
-* **Servidor Backend**: Debe estar en ejecución en `http://localhost:3000`. Vite está configurado para redirigir peticiones `/api` a esa dirección.
+### 3. Gestión de Usuarios
+- Listado de usuarios del sistema
+- Creación, edición y eliminación de usuarios
+- Asignación de departamentos y scopes (roles)
+- Validación de permisos cruzados
 
-### Instalación y Ejecución
+### 4. Sistema de Permisos
+- Autorización basada en backend
+- Permisos granular por módulo y acción
+- Restricciones visuales según permisos
+
+## Sistema de Autenticación y Autorización
+
+### Flujo de Autenticación
+1. Usuario ingresa credenciales en `/login`
+2. Backend valida y retorna usuario + permisos
+3. Información se almacena en Pinia store
+4. Router guard verifica acceso a rutas protegidas
+5. Interceptor de Axios maneja errores 401 automáticamente
+
+### Sistema de Permisos
+Los permisos son proporcionados por el backend y se almacenan en el store de autenticación. Cada módulo (hardware, users) tiene permisos específicos:
+- `canAccessModule`: Acceso al módulo
+- `canCreate`: Crear nuevos elementos
+- `canUpdate`: Editar elementos existentes
+- `canDelete`: Eliminar elementos
+
+## Componentes Principales
+
+### Componentes Base Reutilizables
+
+**BaseModal**: Componente modal genérico con teleportación al body y transiciones.
+
+**DataTable**: Tabla de datos con slots personalizables para celdas y acciones.
+
+**ModalForm**: Formulario modal para crear/editar entidades.
+
+**ConfirmDeleteModal**: Modal de confirmación para eliminaciones.
+
+### Páginas
+
+**Hardware.vue**: Gestión completa de inventario de hardware con filtros, formularios y validaciones.
+
+**Users.vue**: Administración de usuarios con lógica compleja de permisos.
+
+**Dashboard.vue**: Página principal con información del usuario.
+
+## Gestión de Estado
+
+La aplicación utiliza Pinia para el manejo de estado global:
+
+### Auth Store
+- `user`: Información del usuario autenticado
+- `permissions`: Permisos del usuario actual
+- `isAuthenticated`: Estado de autenticación
+- Acciones: `login`, `logout`, `checkSession`
+
+## Manejo de API
+
+El servicio `api.js` configura Axios con:
+- URL base configurable por environment variables
+- Interceptores para manejar errores de autenticación
+- Credenciales incluidas en todas las requests
+
+```javascript
+// Ejemplo de uso en componentes
+import apiClient from '@/services/api';
+
+const fetchData = async () => {
+  try {
+    const response = await apiClient.get('/endpoint');
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error);
+  }
+};
+```
+
+## Instalación y Ejecución
+
+### Prerrequisitos
+- Node.js (`22.19.0`)
+- npm
+- Backend
+
+### Pasos para Ejecución Local
 
 1. **Clonar el Repositorio**
-2. **Instalar Dependencias**
+   ```bash
+   git clone <repositorio>
+   cd <repositorio>
+   ```
 
+2. **Instalar Dependencias**
    ```bash
    npm install
    ```
-3. **Iniciar el Servidor de Desarrollo**
 
+3. **Configurar Variables de Entorno**
+
+   Crea un archivo `.env` en la raíz del proyecto con el siguiente contenido (ajusta los valores según tu entorno):
+
+   ```env
+   # Connects the local frontend to the local backend
+   VITE_API_BASE_URL=/api
+   # Connects the local frontend to the production backend
+   # VITE_API_BASE_URL=<URL>/api
+   ```
+
+4. **Iniciar el Servidor de Desarrollo**
    ```bash
    npm run dev
    ```
-4. **Acceder a la Aplicación**
+
+5. **Acceder a la Aplicación**
    Normalmente en `http://localhost:5173`.
 
+### Notas importantes:
+- Asegúrate de que el backend esté ejecutándose localmente en el puerto 3000
+- El proxy de Vite redirige las requests `/api` al backend local
+- Para conectar con un backend remoto, modifica la variable `VITE_API_BASE_URL`
 
-## 🛠️ Cómo Agregar un Nuevo Módulo de Departamento
-
-Ejemplo: crear un módulo de inventario para **Software**, siguiendo el modelo del módulo de **Hardware**.
-
-1. **Crear el Componente de Página**: `src/pages/Software.vue`. Copiar `Hardware.vue` y reemplazar referencias de “Hardware” por “Software”.
-2. **Definir Permisos en el Store**: Agregar propiedades computadas en `src/stores/auth.js`.
-3. **Agregar la Ruta**: Editar `src/router/index.js` e incluir el nuevo componente con su validación de permisos.
-4. **Agregar el Enlace en Navbar**: Modificar `src/components/Navbar.vue` para incluir `<RouterLink v-if="authStore.canAccessSoftwareModule" to="/software">Software</RouterLink>`.
-5. **Crear Endpoints en Backend**: Implementar rutas `/api/software` y asociadas.
-
-
-## 🔌 Dependencia del Backend
-
-La aplicación es **solo frontend** y depende completamente de un backend externo. La configuración de Vite (`vite.config.js`) redirige cualquier petición a `/api` hacia `http://localhost:3000`.
-
-**Es obligatorio que el backend esté en ejecución en el puerto 3000 antes de iniciar el frontend.**
+### Configuración de Vercel
+El proyecto incluye `vercel.json` para configurar rewrites necesarios para SPAs.
