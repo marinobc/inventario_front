@@ -6,15 +6,20 @@ import apiClient from '@/services/api';
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null);
   // NEW: A ref to hold the permissions object sent from the backend.
-  const permissions = ref({}); 
+  const permissions = ref({}); 
   const isAuthenticated = computed(() => !!user.value);
   const router = useRouter();
+
+  // --- REMOVED ---
+  // All computed properties for permissions (canAccessHardwareModule, canCreateUsers, etc.)
+  // and all permission-checking functions (canEditUser, canDeleteUser) have been removed.
+  // The backend is now the single source of truth for authorization.
 
   // --- CORE ACTIONS ---
   async function login(credentials) {
     try {
       // The login endpoint now returns user and permissions data.
-      const { data } = await apiClient.post('/api/auth/login', credentials);
+      const { data } = await apiClient.post('/auth/login', credentials);
       user.value = data.user;
       permissions.value = data.permissions; // Store the permissions object
       router.push('/dashboard');
@@ -26,13 +31,13 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function logout() {
     try {
-      await apiClient.post('/api/auth/logout');
+      await apiClient.post('/auth/logout');
     } catch (error) {
       console.error('Logout failed:', error);
     } finally {
       // Clear all state on logout
       user.value = null;
-      permissions.value = {}; 
+      permissions.value = {}; 
       router.push('/login');
     }
   }
@@ -40,7 +45,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function checkSession() {
     try {
       // The session endpoint also returns user and permissions data.
-      const { data } = await apiClient.get('/api/auth/session');
+      const { data } = await apiClient.get('/auth/session');
       if (data.loggedIn) {
         user.value = data.user;
         permissions.value = data.permissions; // Store the permissions object
