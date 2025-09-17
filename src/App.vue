@@ -72,7 +72,7 @@ async function extendSession() {
   showIdleModal.value = false;
   resetIdleTimer();
   try {
-    await apiClient.get('/auth/session');
+    await apiClient.get('/api/auth/session');
     console.log('Session extended.');
   } catch (error) {
     console.error('Failed to extend session:', error);
@@ -101,7 +101,7 @@ watch(
       // 2. NEW: Start heartbeat ping every 2 minutes
       heartbeatInterval = setInterval(async () => {
         try {
-          await apiClient.get('/auth/ping');
+          await apiClient.get('/api/auth/ping');
           console.log(`[${new Date().toLocaleTimeString()}] Session refreshed via heartbeat.`);
         } catch (error) {
           console.error('Heartbeat ping failed:', error);
