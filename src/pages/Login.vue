@@ -10,11 +10,13 @@ const errorMessage = ref('');
 
 async function handleSubmit() {
   errorMessage.value = '';
+  console.log('LoginForm:handleSubmit:username', username.value);
   try {
     await authStore.login({ username: username.value, password: password.value });
-    // Router will redirect automatically on success
+    console.log('LoginForm:handleSubmit:success');
   } catch (error) {
     errorMessage.value = error.message;
+    console.error('LoginForm:handleSubmit:error', error);
   }
 }
 </script>

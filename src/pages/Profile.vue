@@ -1,7 +1,9 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth';
 import PageWrapper from '@/components/common/PageWrapper.vue';
+
 const authStore = useAuthStore();
+console.log('ProfilePage:authStore:user', authStore.user);
 </script>
 
 <template>

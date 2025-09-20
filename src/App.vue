@@ -8,17 +8,13 @@ import apiClient from '@/services/api';
 
 const authStore = useAuthStore();
 
-// --- STATE ---
 const showIdleModal = ref(false);
 const idleCountdown = ref(30);
-
-// --- NEW: HEARTBEAT TIMER ---
 let heartbeatInterval = null;
-
-// --- IDLE TIMERS & CONFIG ---
 let idleTimer = null;
 let countdownTimer = null;
 let hiddenTimestamp = null;
+
 const TOTAL_SESSION_DURATION = 3 * 60 * 1000;
 const IDLE_TIMEOUT = 2.5 * 60 * 1000;
 const MODAL_COUNTDOWN_SECONDS = 30;
@@ -43,9 +39,7 @@ function handleVisibilityChange() {
 }
 
 function handleUserActivity() {
-  if (!showIdleModal.value) {
-    resetIdleTimer();
-  }
+  if (!showIdleModal.value) resetIdleTimer();
 }
 
 function resetIdleTimer() {
@@ -73,46 +67,36 @@ async function extendSession() {
   resetIdleTimer();
   try {
     await apiClient.get('/auth/session');
-    console.log('Session extended.');
+    console.log('AppLayout:extendSession:success');
   } catch (error) {
-    console.error('Failed to extend session:', error);
+    console.error('AppLayout:extendSession:error', error);
   }
 }
 
-// --- MODIFIED WATCHER ---
 watch(
   () => authStore.isAuthenticated,
   (isAuth) => {
-    // Stop all timers and intervals when auth state changes
     clearTimeout(idleTimer);
     clearInterval(countdownTimer);
-    clearInterval(heartbeatInterval); // <-- Clear heartbeat
+    clearInterval(heartbeatInterval);
     showIdleModal.value = false;
 
     if (isAuth) {
-      // --- SETUP FOR AUTHENTICATED USER ---
-      // 1. Activity listeners
-      activityEvents.forEach((event) => {
-        window.addEventListener(event, handleUserActivity);
-      });
+      activityEvents.forEach(event => window.addEventListener(event, handleUserActivity));
       document.addEventListener('visibilitychange', handleVisibilityChange);
       resetIdleTimer();
 
-      // 2. NEW: Start heartbeat ping every 2 minutes
       heartbeatInterval = setInterval(async () => {
         try {
           await apiClient.get('/auth/ping');
-          console.log(`[${new Date().toLocaleTimeString()}] Session refreshed via heartbeat.`);
+          console.log(`[${new Date().toLocaleTimeString()}] AppLayout:heartbeat:success`);
         } catch (error) {
-          console.error('Heartbeat ping failed:', error);
-          clearInterval(heartbeatInterval); // Stop pinging on failure
+          console.error('AppLayout:heartbeat:error', error);
+          clearInterval(heartbeatInterval);
         }
       }, 2 * 60 * 1000);
     } else {
-      // --- CLEANUP FOR LOGGED-OUT USER ---
-      activityEvents.forEach((event) => {
-        window.removeEventListener(event, handleUserActivity);
-      });
+      activityEvents.forEach(event => window.removeEventListener(event, handleUserActivity));
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     }
   },
@@ -120,11 +104,8 @@ watch(
 );
 
 onUnmounted(() => {
-  // Final cleanup when the app is closed
   clearInterval(heartbeatInterval);
-  activityEvents.forEach((event) => {
-    window.removeEventListener(event, handleUserActivity);
-  });
+  activityEvents.forEach(event => window.removeEventListener(event, handleUserActivity));
   document.removeEventListener('visibilitychange', handleVisibilityChange);
 });
 </script>

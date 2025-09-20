@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { watch } from 'vue';
+
+const props = defineProps({
   visible: {
     type: Boolean,
     default: false,
@@ -11,6 +13,10 @@ defineProps({
 });
 
 const emit = defineEmits(['close']);
+
+watch(() => props.visible, (val) => {
+  console.log('ModalComponent:watch:visible', val);
+});
 </script>
 
 <template>

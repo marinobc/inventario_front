@@ -4,7 +4,7 @@ import { computed } from 'vue';
 const props = defineProps({
   variant: {
     type: String,
-    default: 'primary', // primary, secondary, danger
+    default: 'primary',
   },
   type: {
     type: String,
@@ -12,7 +12,10 @@ const props = defineProps({
   },
 });
 
-const buttonClass = computed(() => `btn btn-${props.variant}`);
+const buttonClass = computed(() => {
+  console.log('ButtonComponent:buttonClass:variant', props.variant);
+  return `btn btn-${props.variant}`;
+});
 </script>
 
 <template>

@@ -3,7 +3,7 @@ import { computed } from 'vue';
 
 const props = defineProps({
   type: {
-    type: String, // 'success' or 'danger'
+    type: String,
     required: true,
   },
   message: {
@@ -12,7 +12,10 @@ const props = defineProps({
   },
 });
 
-const alertClass = computed(() => `alert alert-${props.type}`);
+const alertClass = computed(() => {
+  console.log('AlertComponent:alertClass:type', props.type);
+  return `alert alert-${props.type}`;
+});
 </script>
 
 <template>

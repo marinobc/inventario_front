@@ -1,11 +1,15 @@
 <script setup>
 import BaseButton from './common/BaseButton.vue';
 
-defineProps({
+const props = defineProps({
   countdown: Number,
 });
 
 const emit = defineEmits(['extend-session']);
+
+watch(() => props.countdown, (val) => {
+  console.log('SessionTimeoutModal:watch:countdown', val);
+});
 </script>
 
 <template>

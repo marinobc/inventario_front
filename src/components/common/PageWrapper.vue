@@ -1,10 +1,12 @@
 <script setup>
-defineProps({
+const props = defineProps({
   title: {
     type: String,
     required: true,
   },
 });
+
+console.log('PageWrapper:props:title', props.title);
 </script>
 
 <template>

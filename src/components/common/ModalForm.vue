@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import BaseModal from './BaseModal.vue';
 import BaseButton from './BaseButton.vue';
 
-defineProps({
+const props = defineProps({
   visible: {
     type: Boolean,
     default: false,
@@ -16,12 +16,16 @@ defineProps({
 
 const emit = defineEmits(['save', 'close']);
 
-// Create a unique ID for the form so the external submit button can target it
-const formId = computed(() => `modal-form-${Math.random().toString(36).substring(2, 9)}`);
+const formId = computed(() => {
+  const id = `modal-form-${Math.random().toString(36).substring(2, 9)}`;
+  console.log('FormModal:formId', id);
+  return id;
+});
 
 const handleSave = () => {
-    emit('save');
-}
+  console.log('FormModal:handleSave:triggered', true);
+  emit('save');
+};
 </script>
 
 <template>

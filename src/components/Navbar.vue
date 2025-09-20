@@ -6,6 +6,7 @@ import BaseButton from '@/components/common/BaseButton.vue';
 const authStore = useAuthStore();
 
 const handleLogout = () => {
+  console.log('Navbar:handleLogout:user', authStore.user);
   authStore.logout();
 };
 </script>
