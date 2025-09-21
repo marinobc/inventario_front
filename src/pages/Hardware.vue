@@ -30,7 +30,7 @@ const initialFilters = {
   version_SO: '',
   responsable: '',
   estado: '',
-  fecha_baja: '', // Added fecha_baja filter
+  fecha_baja: '',
 };
 const filters = ref({ ...initialFilters });
 const filterOptions = ref({
@@ -69,30 +69,46 @@ const tableColumns = ref([
   { key: 'responsable', label: 'Responsable' },
   { key: 'costo', label: 'Costo' },
   { key: 'estado', label: 'Estado' },
-  { key: 'fecha_baja', label: 'Fecha de Baja' }, // Added fecha_baja column
+  { key: 'fecha_baja', label: 'Fecha de Baja' },
 ]);
 
-// --- API Functions ---
+// --- API Functions with DEBUG LOGGING ---
 async function fetchHardware() {
+  console.log("[DEBUG] fetchHardware: Called.");
   isLoading.value = true;
   error.value = '';
   try {
+    console.log("[DEBUG] fetchHardware: Making API call to '/hardware' with filters:", JSON.stringify(filters.value));
     const { data } = await apiClient.get('/hardware', { params: filters.value });
+    console.log("[DEBUG] fetchHardware: API call successful. Received data:", data);
     hardwareItems.value = data;
   } catch (err) {
-    error.value = 'Fallo al cargar los datos de hardware. Puede que no tenga permiso para ver este departamento.';
-    console.error(err);
+    console.error("[DEBUG] fetchHardware: API call FAILED. Full error object:", err);
+    if (err.response) {
+        console.error("[DEBUG] fetchHardware: Error response data:", err.response.data);
+        console.error("[DEBUG] fetchHardware: Error response status:", err.response.status);
+    } else if (err.request) {
+        console.error("[DEBUG] fetchHardware: Error request data:", err.request);
+    } else {
+        console.error("[DEBUG] fetchHardware: General error message:", err.message);
+    }
+    error.value = 'Fallo al cargar los datos de hardware. Revise la consola del navegador para más detalles.';
   } finally {
+    console.log("[DEBUG] fetchHardware: Reached 'finally' block. Setting isLoading to false.");
     isLoading.value = false;
   }
 }
 
 async function fetchFilterOptions() {
+  console.log("[DEBUG] fetchFilterOptions: Called.");
   try {
+    console.log("[DEBUG] fetchFilterOptions: Making API call to '/hardware/filters'.");
     const { data } = await apiClient.get('/hardware/filters');
+    console.log("[DEBUG] fetchFilterOptions: API call successful. Received data:", data);
     filterOptions.value = data;
   } catch (err) {
-    console.error('Fallo al cargar las opciones de filtro:', err);
+    console.error("[DEBUG] fetchFilterOptions: API call FAILED.", err);
+    error.value = 'Fallo al cargar las opciones de filtro.';
   }
 }
 
@@ -118,7 +134,6 @@ async function handleSave() {
   }
 }
 
-// --- Modal-based Delete Logic ---
 function openDeleteModal(item) {
   itemToDelete.value = item;
 }
@@ -136,7 +151,6 @@ async function handleConfirmDelete() {
   }
 }
 
-// --- Form Handling Functions ---
 function showCreateForm() {
   isEditing.value = false;
   currentItem.value = {
@@ -149,7 +163,7 @@ function showCreateForm() {
     costo: 0.00,
     estado: 'Activo',
     tipo_equipo_id_tipo: filterOptions.value.tipos[0]?.id_tipo || 1,
-    fecha_baja: null, // Added fecha_baja
+    fecha_baja: null,
   };
   showFormModal.value = true;
   error.value = '';
@@ -161,13 +175,11 @@ function showEditForm(item) {
   if (editableItem.fecha_mantenimiento) {
     editableItem.fecha_mantenimiento = new Date(item.fecha_mantenimiento).toISOString().split('T')[0];
   }
-  // Added logic for fecha_baja formatting
   if (editableItem.fecha_baja) {
     editableItem.fecha_baja = new Date(item.fecha_baja).toISOString().split('T')[0];
   } else {
     editableItem.fecha_baja = null;
   }
-  // **FIXED**: Map version_so from API to version_SO for the form model
   editableItem.version_SO = item.version_so;
   editableItem.tipo_equipo_id_tipo = item.tipo_equipo_id_tipo;
   currentItem.value = editableItem;
@@ -181,6 +193,7 @@ function cancelForm() {
 
 // --- Lifecycle Hook ---
 onMounted(() => {
+  console.log("[DEBUG] Component Mounted. Starting data fetch.");
   fetchHardware();
   fetchFilterOptions();
 });
@@ -189,7 +202,7 @@ onMounted(() => {
 
 
 <template>
-  <PageWrapper title="Inventario de Hardware" :banner-image="bannerHardwareImage">
+    <PageWrapper title="Inventario de Hardware" :banner-image="bannerHardwareImage">
     <template #actions>
       <Button class="btnNuevo" v-if="authStore.permissions.hardware?.canCreate" @click="showCreateForm">
         + Nuevo Recurso
@@ -239,7 +252,7 @@ onMounted(() => {
           <label for="filter-fecha">Fecha de Mantenimiento</label>
           <input type="date" id="filter-fecha" v-model="filters.fecha_mantenimiento" />
         </div>
-                <div class="filter-group">
+        <div class="filter-group">
           <label for="filter-fecha-baja">Fecha de Baja</label>
           <input type="date" id="filter-fecha-baja" v-model="filters.fecha_baja" />
         </div>
@@ -258,7 +271,7 @@ onMounted(() => {
       <template #cell-fecha_mantenimiento="{ item }">
         {{ new Date(item.fecha_mantenimiento).toLocaleDateString() }}
       </template>
-            <template #cell-fecha_baja="{ item }">
+      <template #cell-fecha_baja="{ item }">
         {{ item.fecha_baja ? new Date(item.fecha_baja).toLocaleDateString() : 'N/A' }}
       </template>
       <template #cell-costo="{ item }">
@@ -318,7 +331,7 @@ onMounted(() => {
           <option v-for="status in statusOptions" :key="status" :value="status">{{ status }}</option>
         </select>
       </div>
-            <div class="form-group">
+      <div class="form-group">
         <label for="fecha_baja">Fecha de Baja</label>
         <input type="date" id="fecha_baja" v-model="currentItem.fecha_baja" />
       </div>
