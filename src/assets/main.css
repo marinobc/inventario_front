@@ -28,7 +28,7 @@
 body {
   font-family: sans-serif;
   margin: 0;
-  background-color: var(--color-background-light);
+  background-color: #d9cbc2;
   color: var(--color-text-dark);
 }
 

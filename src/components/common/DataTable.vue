@@ -1,7 +1,5 @@
 <script setup>
-import { watch } from 'vue';
-
-const props = defineProps({
+defineProps({
   items: {
     type: Array,
     required: true
@@ -18,14 +16,6 @@ const props = defineProps({
     type: Boolean,
     default: false
   }
-});
-
-watch(() => props.items, (val) => {
-  console.log('DataTable:watch:items', val);
-});
-
-watch(() => props.isLoading, (val) => {
-  console.log('DataTable:watch:isLoading', val);
 });
 </script>
 

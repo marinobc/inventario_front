@@ -5,11 +5,17 @@
 .page-wrapper {
   max-width: 1200px;
   margin: 0 auto;
+  /*background: url('https://i.pinimg.com/originals/36/e4/d0/36e4d0b856694fc471344b644a1dd6e4.gif');*/
 }
 
 .page-controls {
+  position: absolute;
   margin-bottom: 20px;
+  margin-right: 20px;
+  top: 90px;
+  right: 140px;
 }
+
 
 .subtitle {
   color: #555;

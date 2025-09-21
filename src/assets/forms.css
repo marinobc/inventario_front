@@ -36,9 +36,9 @@
 
 /* Filter Bar */
 .filter-container {
-  background-color: #f8f9fa;
+  background-color: #E7DDD7;
   border: 1px solid #dee2e6;
-  border-radius: var(--border-radius);
+  border-radius: 20px;
   padding: 15px;
   margin-bottom: 20px;
 }
@@ -53,6 +53,7 @@
 .filter-group {
   display: flex;
   flex-direction: column;
+  
 }
 
 .filter-group label {

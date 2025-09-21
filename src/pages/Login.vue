@@ -10,13 +10,11 @@ const errorMessage = ref('');
 
 async function handleSubmit() {
   errorMessage.value = '';
-  console.log('LoginForm:handleSubmit:username', username.value);
   try {
     await authStore.login({ username: username.value, password: password.value });
-    console.log('LoginForm:handleSubmit:success');
+    // Router will redirect automatically on success
   } catch (error) {
     errorMessage.value = error.message;
-    console.error('LoginForm:handleSubmit:error', error);
   }
 }
 </script>
@@ -37,4 +35,5 @@ async function handleSubmit() {
       <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
     </form>
   </div>
+  
 </template>

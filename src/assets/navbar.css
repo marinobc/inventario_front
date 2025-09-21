@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
+  background-color: #566782;
   color: white;
   padding: 10px 20px;
 }
@@ -24,4 +24,17 @@
 
 .nav-user span {
   margin-right: 15px;
+}
+
+.btnlogout {
+  background-color: #E0C58F;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+}
+
+.btnlogout:hover {
+  background-color: #C9A66B;
 }
