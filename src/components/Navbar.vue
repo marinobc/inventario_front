@@ -19,7 +19,7 @@ const handleLogout = () => {
       <!--<RouterLink v-if="authStore.isAuthenticated" to="/users">Users</RouterLink>-->
     </div>
     <div class="nav-user">
-      <span>WELCOME, {{ authStore.user?.username }}!</span>
+      <span>Bienvenido al Inventario de Hardware</span>
       <!--<RouterLink to="/profile">Profile</RouterLink>-->
       <BaseButton class="btnlogout" @click="handleLogout">Logout</BaseButton>
     </div>
