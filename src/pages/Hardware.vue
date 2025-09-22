@@ -31,6 +31,7 @@ const initialFilters = {
   responsable: '',
   estado: '',
   fecha_baja: '',
+  ubicacion: '',
 };
 const filters = ref({ ...initialFilters });
 const filterOptions = ref({
@@ -39,6 +40,7 @@ const filterOptions = ref({
   versiones_so: [],
   responsables: [],
   estados: [],
+  ubicaciones: [],
 });
 
 // --- State for Modals ---
@@ -64,6 +66,7 @@ const tableColumns = ref([
   { key: 'marca', label: 'Marca' },
   { key: 'modelo', label: 'Modelo' },
   { key: 'serie', label: 'Serie' },
+  { key: 'ubicacion', label: 'Ubicación' },
   { key: 'fecha_mantenimiento', label: 'Mantenimiento' },
   { key: 'version_so', label: 'Versión SO' },
   { key: 'responsable', label: 'Responsable' },
@@ -127,7 +130,8 @@ async function handleSave() {
       await apiClient.post('/hardware', currentItem.value);
     }
     showFormModal.value = false;
-    await fetchHardware();
+    // --- MODIFIED: Fetch both table data and filter options ---
+    await Promise.all([fetchHardware(), fetchFilterOptions()]);
   } catch (err) {
     error.value = `Fallo al guardar el hardware. ${err.response?.data?.message || ''}`;
     console.error(err);
@@ -142,7 +146,8 @@ async function handleConfirmDelete() {
   if (!itemToDelete.value) return;
   try {
     await apiClient.delete(`/hardware/${itemToDelete.value.id_hardware}`);
-    await fetchHardware();
+    // --- MODIFIED: Fetch both table data and filter options ---
+    await Promise.all([fetchHardware(), fetchFilterOptions()]);
   } catch (err) {
     error.value = 'Fallo al eliminar el item de hardware.';
     console.error(err);
@@ -157,6 +162,7 @@ function showCreateForm() {
     marca: '',
     modelo: '',
     serie: '',
+    ubicacion: '',
     fecha_mantenimiento: new Date().toISOString().split('T')[0],
     version_SO: '',
     responsable: '',
@@ -182,6 +188,8 @@ function showEditForm(item) {
   }
   editableItem.version_SO = item.version_so;
   editableItem.tipo_equipo_id_tipo = item.tipo_equipo_id_tipo;
+  // --- MODIFIED: Explicitly set the estado to ensure the dropdown selects it ---
+  editableItem.estado = item.estado;
   currentItem.value = editableItem;
   showFormModal.value = true;
   error.value = '';
@@ -225,6 +233,13 @@ onMounted(() => {
           <select id="filter-marca" v-model="filters.marca">
             <option value="">Todas</option>
             <option v-for="marca in filterOptions.marcas" :key="marca" :value="marca">{{ marca }}</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="filter-ubicacion">Ubicación</label>
+          <select id="filter-ubicacion" v-model="filters.ubicacion">
+            <option value="">Todas</option>
+            <option v-for="loc in filterOptions.ubicaciones" :key="loc" :value="loc">{{ loc }}</option>
           </select>
         </div>
         <div class="filter-group">
@@ -308,6 +323,10 @@ onMounted(() => {
       <div class="form-group">
         <label for="serie">Número de Serie</label>
         <input id="serie" v-model="currentItem.serie" required />
+      </div>
+      <div class="form-group">
+        <label for="ubicacion">Ubicación</label>
+        <input id="ubicacion" v-model="currentItem.ubicacion" />
       </div>
       <div class="form-group">
         <label for="responsable">Persona Responsable</label>
