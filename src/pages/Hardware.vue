@@ -2,8 +2,6 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import apiClient from '@/services/api';
-
-// Import reusable components
 import PageWrapper from '@/components/common/PageWrapper.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import ModalForm from '@/components/common/ModalForm.vue';
@@ -12,17 +10,20 @@ import BaseButton from '@/components/common/BaseButton.vue';
 import ConfirmDeleteModal from '@/components/common/ConfirmDeleteModal.vue';
 import bannerHardwareImage from '@/assets/banner-hardware.jpg';
 
-const authStore = useAuthStore();
+function debounce(fn, wait) {
+  let timeout;
+  return function (...args) {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, args), wait);
+  };
+}
 
-// --- Component State ---
+const authStore = useAuthStore();
 const hardwareItems = ref([]);
 const isLoading = ref(true);
 const error = ref('');
-
-// --- Hardcoded State Options ---
 const statusOptions = ref(["Activo", "Disponible", "En mantenimiento", "Dado de baja"]);
 
-// --- Filter State ---
 const initialFilters = {
   tipo_equipo_id_tipo: '',
   marca: '',
@@ -32,6 +33,7 @@ const initialFilters = {
   estado: '',
   fecha_baja: '',
   ubicacion: '',
+  search: '',
 };
 const filters = ref({ ...initialFilters });
 const filterOptions = ref({
@@ -43,24 +45,20 @@ const filterOptions = ref({
   ubicaciones: [],
 });
 
-// --- State for Modals ---
 const showFormModal = ref(false);
 const isEditing = ref(false);
 const currentItem = ref({});
 const itemToDelete = ref(null);
 
-// --- Computed property for the page subtitle ---
+const searchInput = ref('');
+const searchQuery = ref('');
+
 const pageSubtitle = computed(() => {
-  if (authStore.user?.scope_name === 'Owner') {
-    return "Viendo Inventario del Departamento de Hardware (Acceso Total)";
-  }
-  if (authStore.user?.department_name === 'Hardware') {
-    return `Viendo Inventario para el Departamento de ${authStore.user.department_name}`;
-  }
+  if (authStore.user?.scope_name === 'Owner') return "Viendo Inventario del Departamento de Hardware (Acceso Total)";
+  if (authStore.user?.department_name === 'Hardware') return `Viendo Inventario para el Departamento de ${authStore.user.department_name}`;
   return '';
 });
 
-// --- Table Columns Definition ---
 const tableColumns = ref([
   { key: 'tipo_equipo', label: 'Tipo' },
   { key: 'marca', label: 'Marca' },
@@ -75,50 +73,66 @@ const tableColumns = ref([
   { key: 'fecha_baja', label: 'Fecha de Baja' },
 ]);
 
-// --- API Functions with DEBUG LOGGING ---
+const filteredHardwareItems = computed(() => {
+  const searchTerm = searchQuery.value.toLowerCase().trim();
+  if (!searchTerm) return hardwareItems.value;
+  return hardwareItems.value.filter(item => Object.values(item).some(value => {
+    if (value === null || value === undefined) return false;
+    if (typeof value === 'number') return value.toString().toLowerCase().includes(searchTerm);
+    if (typeof value === 'string') return value.toLowerCase().includes(searchTerm);
+    return false;
+  }));
+});
+
+const debouncedSearch = debounce((value) => {
+  searchQuery.value = value;
+  filters.value.search = value;
+  console.log("HardwarePage:debouncedSearch:searchQuery", value);
+}, 500);
+
+watch(searchInput, (newValue) => debouncedSearch(newValue));
+
+watch(
+  () => ({ ...filters.value, search: undefined }),
+  () => fetchHardware(),
+  { deep: true }
+);
+
 async function fetchHardware() {
-  console.log("[DEBUG] fetchHardware: Called.");
+  console.log("HardwarePage:fetchHardware:Called");
   isLoading.value = true;
   error.value = '';
   try {
-    console.log("[DEBUG] fetchHardware: Making API call to '/hardware' with filters:", JSON.stringify(filters.value));
+    console.log("HardwarePage:fetchHardware:API call with filters", JSON.stringify(filters.value));
     const { data } = await apiClient.get('/hardware', { params: filters.value });
-    console.log("[DEBUG] fetchHardware: API call successful. Received data:", data);
+    console.log("HardwarePage:fetchHardware:Received data", data);
     hardwareItems.value = data;
   } catch (err) {
-    console.error("[DEBUG] fetchHardware: API call FAILED. Full error object:", err);
-    if (err.response) {
-        console.error("[DEBUG] fetchHardware: Error response data:", err.response.data);
-        console.error("[DEBUG] fetchHardware: Error response status:", err.response.status);
-    } else if (err.request) {
-        console.error("[DEBUG] fetchHardware: Error request data:", err.request);
-    } else {
-        console.error("[DEBUG] fetchHardware: General error message:", err.message);
-    }
-    error.value = 'Fallo al cargar los datos de hardware. Revise la consola del navegador para más detalles.';
+    console.error("HardwarePage:fetchHardware:Error", err);
+    error.value = 'Fallo al cargar los datos de hardware.';
   } finally {
-    console.log("[DEBUG] fetchHardware: Reached 'finally' block. Setting isLoading to false.");
     isLoading.value = false;
+    console.log("HardwarePage:fetchHardware:Completed, isLoading=false");
   }
 }
 
 async function fetchFilterOptions() {
-  console.log("[DEBUG] fetchFilterOptions: Called.");
+  console.log("HardwarePage:fetchFilterOptions:Called");
   try {
-    console.log("[DEBUG] fetchFilterOptions: Making API call to '/hardware/filters'.");
     const { data } = await apiClient.get('/hardware/filters');
-    console.log("[DEBUG] fetchFilterOptions: API call successful. Received data:", data);
+    console.log("HardwarePage:fetchFilterOptions:Received data", data);
     filterOptions.value = data;
   } catch (err) {
-    console.error("[DEBUG] fetchFilterOptions: API call FAILED.", err);
+    console.error("HardwarePage:fetchFilterOptions:Error", err);
     error.value = 'Fallo al cargar las opciones de filtro.';
   }
 }
 
-watch(filters, fetchHardware, { deep: true });
-
 function clearFilters() {
   filters.value = { ...initialFilters };
+  searchInput.value = '';
+  searchQuery.value = '';
+  console.log("HardwarePage:clearFilters:Filters reset");
 }
 
 async function handleSave() {
@@ -130,27 +144,26 @@ async function handleSave() {
       await apiClient.post('/hardware', currentItem.value);
     }
     showFormModal.value = false;
-    // --- MODIFIED: Fetch both table data and filter options ---
     await Promise.all([fetchHardware(), fetchFilterOptions()]);
   } catch (err) {
     error.value = `Fallo al guardar el hardware. ${err.response?.data?.message || ''}`;
-    console.error(err);
+    console.error("HardwarePage:handleSave:Error", err);
   }
 }
 
 function openDeleteModal(item) {
   itemToDelete.value = item;
+  console.log("HardwarePage:openDeleteModal:itemToDelete", item);
 }
 
 async function handleConfirmDelete() {
   if (!itemToDelete.value) return;
   try {
     await apiClient.delete(`/hardware/${itemToDelete.value.id_hardware}`);
-    // --- MODIFIED: Fetch both table data and filter options ---
     await Promise.all([fetchHardware(), fetchFilterOptions()]);
   } catch (err) {
     error.value = 'Fallo al eliminar el item de hardware.';
-    console.error(err);
+    console.error("HardwarePage:handleConfirmDelete:Error", err);
   } finally {
     itemToDelete.value = null;
   }
@@ -173,51 +186,50 @@ function showCreateForm() {
   };
   showFormModal.value = true;
   error.value = '';
+  console.log("HardwarePage:showCreateForm:currentItem", currentItem.value);
 }
 
 function showEditForm(item) {
   isEditing.value = true;
   const editableItem = { ...item };
-  if (editableItem.fecha_mantenimiento) {
-    editableItem.fecha_mantenimiento = new Date(item.fecha_mantenimiento).toISOString().split('T')[0];
-  }
-  if (editableItem.fecha_baja) {
-    editableItem.fecha_baja = new Date(item.fecha_baja).toISOString().split('T')[0];
-  } else {
-    editableItem.fecha_baja = null;
-  }
+  editableItem.fecha_mantenimiento = editableItem.fecha_mantenimiento ? new Date(editableItem.fecha_mantenimiento).toISOString().split('T')[0] : '';
+  editableItem.fecha_baja = editableItem.fecha_baja ? new Date(editableItem.fecha_baja).toISOString().split('T')[0] : null;
   editableItem.version_SO = item.version_so;
   editableItem.tipo_equipo_id_tipo = item.tipo_equipo_id_tipo;
-  // --- MODIFIED: Explicitly set the estado to ensure the dropdown selects it ---
   editableItem.estado = item.estado;
   currentItem.value = editableItem;
   showFormModal.value = true;
   error.value = '';
+  console.log("HardwarePage:showEditForm:currentItem", currentItem.value);
 }
 
 function cancelForm() {
   showFormModal.value = false;
+  console.log("HardwarePage:cancelForm:Modal closed");
 }
 
-// --- Lifecycle Hook ---
 onMounted(() => {
-  console.log("[DEBUG] Component Mounted. Starting data fetch.");
+  console.log("HardwarePage:onMounted:Component mounted, fetching data");
   fetchHardware();
   fetchFilterOptions();
 });
 </script>
 
-
-
 <template>
-    <PageWrapper title="Inventario de Hardware" :banner-image="bannerHardwareImage">
+  <PageWrapper title="Inventario de Hardware" :banner-image="bannerHardwareImage">
     <template #actions>
-      <Button class="btnNuevo" v-if="authStore.permissions.hardware?.canCreate" @click="showCreateForm">
+      <BaseButton class="btnNuevo" v-if="authStore.permissions.hardware?.canCreate" @click="showCreateForm">
         + Nuevo Recurso
-      </Button>
+      </BaseButton>
     </template>
 
     <div class="filter-container">
+      <div class="search-container">
+        <div class="filter-group search-group">
+          <label for="filter-search">Buscar</label>
+          <input id="filter-search" v-model="searchInput" placeholder="Buscar en todos los campos..." />
+        </div>
+      </div>
       <div class="filter-grid">
         <div class="filter-group">
           <label for="filter-tipo">Tipo</label>
@@ -278,7 +290,7 @@ onMounted(() => {
     <AlertMessage type="danger" :message="error" />
 
     <DataTable
-      :items="hardwareItems"
+      :items="filteredHardwareItems"
       :columns="tableColumns"
       :is-loading="isLoading"
       :actions-visible="authStore.permissions.hardware?.canUpdate || authStore.permissions.hardware?.canDelete"
