@@ -8,7 +8,7 @@ import ModalForm from '@/components/common/ModalForm.vue';
 import AlertMessage from '@/components/common/AlertMessage.vue';
 import BaseButton from '@/components/common/BaseButton.vue';
 import ConfirmDeleteModal from '@/components/common/ConfirmDeleteModal.vue';
-import bannerHardwareImage from '@/assets/banner-hardware.jpg';
+import bannerHardwareImage from '@/assets/bannerhardware.png';
 
 function debounce(fn, wait) {
   let timeout;
