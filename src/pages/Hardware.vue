@@ -302,7 +302,7 @@ onMounted(() => {
         {{ item.fecha_baja ? new Date(item.fecha_baja).toLocaleDateString() : 'N/A' }}
       </template>
       <template #cell-costo="{ item }">
-        ${{ Number(item.costo).toFixed(2) }}
+        USD.{{ Number(item.costo).toFixed(2) }}
       </template>
       <template #actions="{ item }">
         <BaseButton v-if="item.canBeEdited" class="btnEditar" style="background-color: #849CC4;" @click="showEditForm(item)">Editar</BaseButton>
