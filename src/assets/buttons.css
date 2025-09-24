@@ -11,7 +11,7 @@
 }
 
 .btnNuevo {
-  background-color: #849CC4;
+  background-color: #27539B;
   color: white;
   font-size: 0.9em;
   border-radius: 10px;
@@ -21,7 +21,7 @@
 }
 
 .btnclearF {
-  background-color: #E0C58F;
+  background-color: #273B7A;
   color: white;
   font-size: 0.9em;
   border-radius: 10px;
@@ -31,12 +31,12 @@
 }
 
 .btnclearF:hover {
-  background-color: #C9A66B;
+  background-color: #CED9E9;
 }
 
 
 .btnNuevo:hover {
-  background-color: #004181;
+  background-color: #0d2d60;
 }
 
 .btn-primary {
