@@ -7,7 +7,7 @@ const authStore = useAuthStore();
 
 const handleLogout = () => {
   authStore.logout();
-  window.location.href = 'https://sis-322-hagen-co.vercel.app/';
+  window.location.href = 'https://calidad-software-frontend.pages.dev/';
 };
 </script>
 
