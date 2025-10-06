@@ -49,11 +49,11 @@ const availableScopes = computed(() => {
 
 // --- Table Columns Definition ---
 const tableColumns = ref([
-    { key: 'username', label: 'Username' },
-    { key: 'full_name', label: 'Full Name' },
-    { key: 'email', label: 'Email' },
-    { key: 'department_name', label: 'Department' },
-    { key: 'scope_name', label: 'Scope' },
+  { key: 'username', label: 'Username' },
+  { key: 'full_name', label: 'Full Name' },
+  { key: 'email', label: 'Email' },
+  { key: 'department_name', label: 'Department' },
+  { key: 'scope_name', label: 'Scope' },
 ]);
 
 // --- API Functions ---
@@ -94,9 +94,9 @@ async function handleSave() {
   successMessage.value = '';
   try {
     if (isEditing.value && currentUser.value.password === '') {
-        delete currentUser.value.password;
+      delete currentUser.value.password;
     }
-    
+
     if (isEditing.value) {
       const { data } = await apiClient.put(`/users/${currentUser.value.id}`, currentUser.value);
       successMessage.value = `User '${data.username}' updated successfully!`;
@@ -134,8 +134,8 @@ async function handleConfirmDelete() {
 // --- Form Handling Functions ---
 function showCreateForm() {
   isEditing.value = false;
-  const defaultDeptId = authStore.user?.scope_name === 'Manager' 
-    ? authStore.user.department_id 
+  const defaultDeptId = authStore.user?.scope_name === 'Manager'
+    ? authStore.user.department_id
     : (departments.value[0]?.id || 1);
 
   currentUser.value = {
@@ -155,7 +155,7 @@ function showEditForm(user) {
   isEditing.value = true;
   const scope = scopes.value.find(s => s.name === user.scope_name);
   const department = departments.value.find(d => d.name === user.department_name);
-  
+
   currentUser.value = {
     ...user,
     password: '',
@@ -191,44 +191,31 @@ onMounted(() => {
     <AlertMessage type="danger" :message="error" />
 
     <h2>Existing Users</h2>
-    <DataTable
-      :items="users"
-      :columns="tableColumns"
-      :is-loading="isLoading"
-      :actions-visible="true"
-    >
+    <DataTable :items="users" :columns="tableColumns" :is-loading="isLoading" :actions-visible="true">
       <template #actions="{ item }">
         <BaseButton v-if="item.canBeEdited" variant="secondary" @click="showEditForm(item)">Edit</BaseButton>
         <BaseButton v-if="item.canBeDeleted" variant="danger" @click="openDeleteModal(item)">Delete</BaseButton>
       </template>
     </DataTable>
 
-    <ModalForm
-      :visible="showFormModal"
-      :title="isEditing ? 'Edit User' : 'Add New User'"
-      @save="handleSave"
-      @close="cancelForm"
-    >
+    <ModalForm :visible="showFormModal" :title="isEditing ? 'Edit User' : 'Add New User'" @save="handleSave"
+      @close="cancelForm">
       <div class="form-group">
-          <label for="username">Username</label>
-          <input id="username" v-model="currentUser.username" required />
+        <label for="username">Username</label>
+        <input id="username" v-model="currentUser.username" required />
       </div>
       <div class="form-group">
-          <label for="fullName">Full Name</label>
-          <input id="fullName" v-model="currentUser.full_name" required />
+        <label for="fullName">Full Name</label>
+        <input id="fullName" v-model="currentUser.full_name" required />
       </div>
       <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" v-model="currentUser.email" required />
+        <label for="email">Email</label>
+        <input type="email" id="email" v-model="currentUser.email" required />
       </div>
       <div class="form-group" v-if="shouldShowPasswordField">
         <label for="password">Password</label>
-        <input 
-          type="password" 
-          id="password" 
-          v-model="currentUser.password"
-          :placeholder="isEditing ? 'Leave blank to keep current' : ''"
-          :required="!isEditing" />
+        <input type="password" id="password" v-model="currentUser.password"
+          :placeholder="isEditing ? 'Leave blank to keep current' : ''" :required="!isEditing" />
       </div>
       <div class="form-group">
         <label for="scope">Scope</label>
@@ -248,11 +235,7 @@ onMounted(() => {
       </div>
     </ModalForm>
 
-    <ConfirmDeleteModal
-      :visible="!!userToDelete"
-      :item-name="userToDelete?.username"
-      @close="userToDelete = null"
-      @confirm="handleConfirmDelete"
-    />
+    <ConfirmDeleteModal :visible="!!userToDelete" :item-name="userToDelete?.username" @close="userToDelete = null"
+      @confirm="handleConfirmDelete" />
   </PageWrapper>
 </template>

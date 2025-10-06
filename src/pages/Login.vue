@@ -35,5 +35,5 @@ async function handleSubmit() {
       <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
     </form>
   </div>
-  
+
 </template>

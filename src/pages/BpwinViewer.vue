@@ -59,13 +59,8 @@ function adjustIframeContent() {
       </button>
     </div>
     <div class="bpwin-container">
-      <iframe
-        ref="iframeRef"
-        src="/Bpwin/Sample1.htm"
-        class="bpwin-iframe"
-        title="Bpwin Report"
-        @load="adjustIframeContent"
-      ></iframe>
+      <iframe ref="iframeRef" src="/Bpwin/Sample1.htm" class="bpwin-iframe" title="Bpwin Report"
+        @load="adjustIframeContent"></iframe>
     </div>
   </div>
 </template>
@@ -85,7 +80,8 @@ function adjustIframeContent() {
 
 .bpwin-header {
   background-color: #566782;
-  padding: 40px 20px 10px 20px; /* top right bottom left */
+  padding: 40px 20px 10px 20px;
+  /* top right bottom left */
   display: flex;
   justify-content: flex-end;
   flex-shrink: 0;

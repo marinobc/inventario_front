@@ -10,4 +10,4 @@ const authStore = useAuthStore();
     <p>Your role is: <strong>{{ authStore.user?.scope_name }}</strong></p>
     <p>Your department is: <strong>{{ authStore.user?.department_name }}</strong></p>
   </PageWrapper>
-</template> 
+</template>
