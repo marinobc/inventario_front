@@ -49,6 +49,8 @@ const showFormModal = ref(false);
 const isEditing = ref(false);
 const currentItem = ref({});
 const itemToDelete = ref(null);
+const imageUrl = ref('https://lucid.app/systemTemplates/thumb/b4077d34-8921-4c80-b98c-b287d34d6fdc/0/124/NULL/2400/true?clipToPage=false');
+
 
 const searchInput = ref('');
 const searchQuery = ref('');
@@ -229,10 +231,15 @@ onMounted(() => {
 
     <RouterLink :to="{ name: 'bpwin' }">
   <BaseButton class="btnNuevo" variant="primary">
-    View BPWin Report
+    Ver IDEF0
   </BaseButton>
 </RouterLink>
 
+<a :href="imageUrl" target="_blank" rel="noopener noreferrer">
+      <BaseButton class="btnNuevo" variant="secondary">
+        Ver BMPN
+      </BaseButton>
+    </a>
   </div>
 </template>
 
