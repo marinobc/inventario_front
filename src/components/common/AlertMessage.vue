@@ -3,7 +3,7 @@ import { computed } from 'vue';
 
 const props = defineProps({
   type: {
-    type: String, // 'success' or 'danger'
+    type: String,
     required: true,
   },
   message: {

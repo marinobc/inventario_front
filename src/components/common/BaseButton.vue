@@ -4,7 +4,7 @@ import { computed } from 'vue';
 const props = defineProps({
   variant: {
     type: String,
-    default: 'primary', // primary, secondary, danger
+    default: 'primary',
   },
   type: {
     type: String,

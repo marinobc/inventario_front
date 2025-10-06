@@ -218,10 +218,23 @@ onMounted(() => {
 <template>
   <PageWrapper title="Inventario de Hardware" :banner-image="bannerHardwareImage">
     <template #actions>
-      <BaseButton class="btnNuevo" v-if="authStore.permissions.hardware?.canCreate" @click="showCreateForm">
-        + Nuevo Recurso
-      </BaseButton>
-    </template>
+  <div class="flex justify-between w-full">
+    <BaseButton
+      class="btnNuevo"
+      v-if="authStore.permissions.hardware?.canCreate"
+      @click="showCreateForm"
+    >
+      + Nuevo Recurso
+    </BaseButton>
+
+    <RouterLink :to="{ name: 'bpwin' }">
+  <BaseButton class="btnNuevo" variant="primary">
+    View BPWin Report
+  </BaseButton>
+</RouterLink>
+
+  </div>
+</template>
 
     <div class="filter-container">
       <div class="search-container">
