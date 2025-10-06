@@ -85,7 +85,7 @@ function adjustIframeContent() {
 
 .bpwin-header {
   background-color: #566782;
-  padding: 10px 20px;
+  padding: 40px 20px 10px 20px; /* top right bottom left */
   display: flex;
   justify-content: flex-end;
   flex-shrink: 0;
