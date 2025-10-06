@@ -220,28 +220,24 @@ onMounted(() => {
 <template>
   <PageWrapper title="Inventario de Hardware" :banner-image="bannerHardwareImage">
     <template #actions>
-  <div class="flex justify-between w-full">
-    <BaseButton
-      class="btnNuevo"
-      v-if="authStore.permissions.hardware?.canCreate"
-      @click="showCreateForm"
-    >
-      + Nuevo Recurso
-    </BaseButton>
+      <div class="flex justify-between w-full">
+        <BaseButton class="btnNuevo" v-if="authStore.permissions.hardware?.canCreate" @click="showCreateForm">
+          + Nuevo Recurso
+        </BaseButton>
 
-    <RouterLink :to="{ name: 'bpwin' }">
-  <BaseButton class="btnNuevo" variant="primary">
-    Ver IDEF0
-  </BaseButton>
-</RouterLink>
+        <RouterLink :to="{ name: 'bpwin' }">
+          <BaseButton class="btnNuevo" variant="primary">
+            Ver IDEF0
+          </BaseButton>
+        </RouterLink>
 
-<a :href="imageUrl" target="_blank" rel="noopener noreferrer">
-      <BaseButton class="btnNuevo" variant="secondary">
-        Ver BMPN
-      </BaseButton>
-    </a>
-  </div>
-</template>
+        <a :href="imageUrl" target="_blank" rel="noopener noreferrer">
+          <BaseButton class="btnNuevo" variant="secondary">
+            Ver BMPN
+          </BaseButton>
+        </a>
+      </div>
+    </template>
 
     <div class="filter-container">
       <div class="search-container">
@@ -309,12 +305,8 @@ onMounted(() => {
 
     <AlertMessage type="danger" :message="error" />
 
-    <DataTable
-      :items="filteredHardwareItems"
-      :columns="tableColumns"
-      :is-loading="isLoading"
-      :actions-visible="authStore.permissions.hardware?.canUpdate || authStore.permissions.hardware?.canDelete"
-    >
+    <DataTable :items="filteredHardwareItems" :columns="tableColumns" :is-loading="isLoading"
+      :actions-visible="authStore.permissions.hardware?.canUpdate || authStore.permissions.hardware?.canDelete">
       <template #cell-fecha_mantenimiento="{ item }">
         {{ new Date(item.fecha_mantenimiento).toLocaleDateString() }}
       </template>
@@ -325,17 +317,15 @@ onMounted(() => {
         USD.{{ Number(item.costo).toFixed(2) }}
       </template>
       <template #actions="{ item }">
-        <BaseButton v-if="item.canBeEdited" class="btnEditar" style="background-color: #849CC4;" @click="showEditForm(item)">Editar</BaseButton>
-        <BaseButton v-if="item.canBeDeleted" class="btnEliminar" style="background-color: #E02424;" @click="openDeleteModal(item)">Eliminar</BaseButton>
+        <BaseButton v-if="item.canBeEdited" class="btnEditar" style="background-color: #849CC4;"
+          @click="showEditForm(item)">Editar</BaseButton>
+        <BaseButton v-if="item.canBeDeleted" class="btnEliminar" style="background-color: #E02424;"
+          @click="openDeleteModal(item)">Eliminar</BaseButton>
       </template>
     </DataTable>
 
-    <ModalForm
-      :visible="showFormModal"
-      :title="isEditing ? 'Editar Hardware' : 'Añadir Nuevo Hardware'"
-      @save="handleSave"
-      @close="cancelForm"
-    >
+    <ModalForm :visible="showFormModal" :title="isEditing ? 'Editar Hardware' : 'Añadir Nuevo Hardware'"
+      @save="handleSave" @close="cancelForm">
       <div class="form-group">
         <label for="tipo_equipo_id_tipo">Tipo</label>
         <select id="tipo_equipo_id_tipo" v-model="currentItem.tipo_equipo_id_tipo" required>
@@ -388,11 +378,8 @@ onMounted(() => {
       </div>
     </ModalForm>
 
-    <ConfirmDeleteModal
-      :visible="!!itemToDelete"
-      :item-name="itemToDelete ? `${itemToDelete.marca} ${itemToDelete.modelo}` : ''"
-      @close="itemToDelete = null"
-      @confirm="handleConfirmDelete"
-    />
+    <ConfirmDeleteModal :visible="!!itemToDelete"
+      :item-name="itemToDelete ? `${itemToDelete.marca} ${itemToDelete.modelo}` : ''" @close="itemToDelete = null"
+      @confirm="handleConfirmDelete" />
   </PageWrapper>
 </template>
