@@ -7,7 +7,7 @@
   text-decoration: none;
   display: inline-block;
   font-size: 0.9em;
-  transition: background-color 0.2s ease;;
+  margin: 4px;
 }
 
 .btnNuevo {
@@ -58,4 +58,10 @@
 }
 .btn-danger:hover {
   background-color: var(--color-danger-hover);
+}
+
+.filter-buttons .btnClearF:first-child {
+  margin-left: 0 !important;
+  margin-right: 4px;
+  margin-top: 10px;
 }
