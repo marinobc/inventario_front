@@ -208,9 +208,8 @@ async function handleSave() {
     showFormModal.value = false;
     await Promise.all([fetchHardware(), fetchFilterOptions()]);
   } catch (err) {
-    error.value = `Fallo al guardar el hardware. ${
-      err.response?.data?.message || ""
-    }`;
+    error.value = `Fallo al guardar el hardware. ${err.response?.data?.message || ""
+      }`;
     console.error("HardwarePage:handleSave:Error", err);
   }
 }
@@ -284,17 +283,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <PageWrapper
-    title="Inventario de Hardware"
-    :banner-image="bannerHardwareImage"
-  >
+  <PageWrapper title="Inventario de Hardware" :banner-image="bannerHardwareImage">
     <template #actions>
       <div class="flex justify-between w-full">
-        <BaseButton
-          class="btnNuevo"
-          v-if="authStore.permissions.hardware?.canCreate"
-          @click="showCreateForm"
-        >
+        <BaseButton class="btnNuevo" v-if="authStore.permissions.hardware?.canCreate" @click="showCreateForm">
           + Nuevo Recurso
         </BaseButton>
 
@@ -308,15 +300,30 @@ onMounted(() => {
           <BaseButton class="btnNuevo" variant="primary">BMPN </BaseButton>
         </a>
 
-        <a
-          href="https://democompany.teramind.co/#/report/Focus+Dashboard"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <RouterLink :to="{ name: 'scrum' }">
+          <BaseButton class="btnNuevo" variant="primary">
+            SCRUM
+          </BaseButton>
+        </RouterLink>
+
+        <RouterLink :to="{ name: 'scrumf' }">
+          <BaseButton class="btnNuevo" variant="secondary">
+            SCRUM (Intento embed)
+          </BaseButton>
+        </RouterLink>
+
+
+        <a href="https://democompany.teramind.co/#/report/Focus+Dashboard" target="_blank" rel="noopener noreferrer">
           <BaseButton class="btnNuevo" variant="primary">
             Monitoreo
           </BaseButton>
         </a>
+
+        <RouterLink :to="{ name: 'budget' }">
+          <BaseButton class="btnNuevo" variant="primary">
+            Presupuesto
+          </BaseButton>
+        </RouterLink>
       </div>
     </template>
 
@@ -324,11 +331,7 @@ onMounted(() => {
       <div class="search-container">
         <div class="filter-group search-group">
           <label for="filter-search">Buscar</label>
-          <input
-            id="filter-search"
-            v-model="searchInput"
-            placeholder="Buscar en todos los campos..."
-          />
+          <input id="filter-search" v-model="searchInput" placeholder="Buscar en todos los campos..." />
         </div>
       </div>
       <div class="filter-grid">
@@ -336,11 +339,7 @@ onMounted(() => {
           <label for="filter-tipo">Tipo</label>
           <select id="filter-tipo" v-model="filters.tipo_equipo_id_tipo">
             <option value="">Todos</option>
-            <option
-              v-for="tipo in filterOptions.tipos"
-              :key="tipo.id_tipo"
-              :value="tipo.id_tipo"
-            >
+            <option v-for="tipo in filterOptions.tipos" :key="tipo.id_tipo" :value="tipo.id_tipo">
               {{ tipo.tipo }}
             </option>
           </select>
@@ -349,11 +348,7 @@ onMounted(() => {
           <label for="filter-marca">Marca</label>
           <select id="filter-marca" v-model="filters.marca">
             <option value="">Todas</option>
-            <option
-              v-for="marca in filterOptions.marcas"
-              :key="marca"
-              :value="marca"
-            >
+            <option v-for="marca in filterOptions.marcas" :key="marca" :value="marca">
               {{ marca }}
             </option>
           </select>
@@ -362,11 +357,7 @@ onMounted(() => {
           <label for="filter-ubicacion">Ubicación</label>
           <select id="filter-ubicacion" v-model="filters.ubicacion">
             <option value="">Todas</option>
-            <option
-              v-for="loc in filterOptions.ubicaciones"
-              :key="loc"
-              :value="loc"
-            >
+            <option v-for="loc in filterOptions.ubicaciones" :key="loc" :value="loc">
               {{ loc }}
             </option>
           </select>
@@ -375,11 +366,7 @@ onMounted(() => {
           <label for="filter-estado">Estado</label>
           <select id="filter-estado" v-model="filters.estado">
             <option value="">Todos</option>
-            <option
-              v-for="estado in statusOptions"
-              :key="estado"
-              :value="estado"
-            >
+            <option v-for="estado in statusOptions" :key="estado" :value="estado">
               {{ estado }}
             </option>
           </select>
@@ -388,11 +375,7 @@ onMounted(() => {
           <label for="filter-responsable">Responsable</label>
           <select id="filter-responsable" v-model="filters.responsable">
             <option value="">Todos</option>
-            <option
-              v-for="resp in filterOptions.responsables"
-              :key="resp"
-              :value="resp"
-            >
+            <option v-for="resp in filterOptions.responsables" :key="resp" :value="resp">
               {{ resp }}
             </option>
           </select>
@@ -401,30 +384,18 @@ onMounted(() => {
           <label for="filter-version_SO">Versión SO</label>
           <select id="filter-version_SO" v-model="filters.version_SO">
             <option value="">Todas</option>
-            <option
-              v-for="ver in filterOptions.versiones_so"
-              :key="ver"
-              :value="ver"
-            >
+            <option v-for="ver in filterOptions.versiones_so" :key="ver" :value="ver">
               {{ ver }}
             </option>
           </select>
         </div>
         <div class="filter-group">
           <label for="filter-fecha">Fecha de Mantenimiento</label>
-          <input
-            type="date"
-            id="filter-fecha"
-            v-model="filters.fecha_mantenimiento"
-          />
+          <input type="date" id="filter-fecha" v-model="filters.fecha_mantenimiento" />
         </div>
         <div class="filter-group">
           <label for="filter-fecha-baja">Fecha de Baja</label>
-          <input
-            type="date"
-            id="filter-fecha-baja"
-            v-model="filters.fecha_baja"
-          />
+          <input type="date" id="filter-fecha-baja" v-model="filters.fecha_baja" />
         </div>
       </div>
       <div class="filter-buttons">
@@ -440,15 +411,9 @@ onMounted(() => {
 
     <AlertMessage type="danger" :message="error" />
 
-    <DataTable
-      :items="filteredHardwareItems"
-      :columns="tableColumns"
-      :is-loading="isLoading"
-      :actions-visible="
-        authStore.permissions.hardware?.canUpdate ||
-        authStore.permissions.hardware?.canDelete
-      "
-    >
+    <DataTable :items="filteredHardwareItems" :columns="tableColumns" :is-loading="isLoading" :actions-visible="authStore.permissions.hardware?.canUpdate ||
+      authStore.permissions.hardware?.canDelete
+      ">
       <template #cell-fecha_mantenimiento="{ item }">
         {{ new Date(item.fecha_mantenimiento).toLocaleDateString() }}
       </template>
@@ -463,41 +428,19 @@ onMounted(() => {
         USD.{{ Number(item.costo).toFixed(2) }}
       </template>
       <template #actions="{ item }">
-        <BaseButton
-          v-if="item.canBeEdited"
-          class="btnEditar"
-          style="background-color: #849cc4"
-          @click="showEditForm(item)"
-          >Editar</BaseButton
-        >
-        <BaseButton
-          v-if="item.canBeDeleted"
-          class="btnEliminar"
-          style="background-color: #e02424"
-          @click="openDeleteModal(item)"
-          >Eliminar</BaseButton
-        >
+        <BaseButton v-if="item.canBeEdited" class="btnEditar" style="background-color: #849cc4"
+          @click="showEditForm(item)">Editar</BaseButton>
+        <BaseButton v-if="item.canBeDeleted" class="btnEliminar" style="background-color: #e02424"
+          @click="openDeleteModal(item)">Eliminar</BaseButton>
       </template>
     </DataTable>
 
-    <ModalForm
-      :visible="showFormModal"
-      :title="isEditing ? 'Editar Hardware' : 'Añadir Nuevo Hardware'"
-      @save="handleSave"
-      @close="cancelForm"
-    >
+    <ModalForm :visible="showFormModal" :title="isEditing ? 'Editar Hardware' : 'Añadir Nuevo Hardware'"
+      @save="handleSave" @close="cancelForm">
       <div class="form-group">
         <label for="tipo_equipo_id_tipo">Tipo</label>
-        <select
-          id="tipo_equipo_id_tipo"
-          v-model="currentItem.tipo_equipo_id_tipo"
-          required
-        >
-          <option
-            v-for="tipo in filterOptions.tipos"
-            :key="tipo.id_tipo"
-            :value="tipo.id_tipo"
-          >
+        <select id="tipo_equipo_id_tipo" v-model="currentItem.tipo_equipo_id_tipo" required>
+          <option v-for="tipo in filterOptions.tipos" :key="tipo.id_tipo" :value="tipo.id_tipo">
             {{ tipo.tipo }}
           </option>
         </select>
@@ -528,22 +471,11 @@ onMounted(() => {
       </div>
       <div class="form-group">
         <label for="fecha_mantenimiento">Fecha de Mantenimiento</label>
-        <input
-          type="date"
-          id="fecha_mantenimiento"
-          v-model="currentItem.fecha_mantenimiento"
-          required
-        />
+        <input type="date" id="fecha_mantenimiento" v-model="currentItem.fecha_mantenimiento" required />
       </div>
       <div class="form-group">
         <label for="costo">Costo</label>
-        <input
-          type="number"
-          step="0.01"
-          id="costo"
-          v-model="currentItem.costo"
-          required
-        />
+        <input type="number" step="0.01" id="costo" v-model="currentItem.costo" required />
       </div>
       <div class="form-group">
         <label for="estado">Estado</label>
@@ -559,13 +491,7 @@ onMounted(() => {
       </div>
     </ModalForm>
 
-    <ConfirmDeleteModal
-      :visible="!!itemToDelete"
-      :item-name="
-        itemToDelete ? `${itemToDelete.marca} ${itemToDelete.modelo}` : ''
-      "
-      @close="itemToDelete = null"
-      @confirm="handleConfirmDelete"
-    />
+    <ConfirmDeleteModal :visible="!!itemToDelete" :item-name="itemToDelete ? `${itemToDelete.marca} ${itemToDelete.modelo}` : ''
+      " @close="itemToDelete = null" @confirm="handleConfirmDelete" />
   </PageWrapper>
 </template>

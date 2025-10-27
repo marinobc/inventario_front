@@ -1,99 +1,96 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const iframeRef = ref(null);
+
+let originalOverflow = '';
+
+onMounted(() => {
+  window.scrollTo(0, 0);
+  originalOverflow = document.body.style.overflow;
+  document.body.style.overflow = 'hidden';
+});
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = originalOverflow;
+});
 
 function goBack() {
   router.push({ name: 'hardware' });
 }
 
 function adjustIframeContent() {
-  console.log('[DEBUG] BpwinViewer: @load event fired. Running aggressive adjustment...');
-  try {
-    const iframe = iframeRef.value;
-    if (!iframe) return;
+  const iframe = iframeRef.value;
+  if (!iframe) return;
 
-    const iframeDoc = iframe.contentWindow.document;
+  try {
+    const iframeDoc = iframe.contentWindow?.document;
     if (!iframeDoc) return;
 
-    // --- AGGRESSIVE COMBINED APPROACH ---
-
-    // 1. Force the layout attribute (Primary Fix)
     const frameset = iframeDoc.querySelector('frameset');
     if (frameset) {
       frameset.setAttribute('rows', '*');
-      console.log('[DEBUG] Set <frameset> attribute rows="*".');
-    } else {
-      console.warn('[DEBUG] Could not find <frameset> element to modify.');
     }
 
-    // 2. Force the CSS with !important (Secondary Fix)
-    const styleEl = iframeDoc.createElement('style');
-    styleEl.textContent = `
-      /* Use !important to override any stubborn browser default styles for framesets */
+    const style = iframeDoc.createElement('style');
+    style.textContent = `
       html, body, frameset {
-        height: 100vh !important;
+        height: 100% !important;
         margin: 0 !important;
         padding: 0 !important;
         overflow: hidden !important;
       }
     `;
-    iframeDoc.head.appendChild(styleEl);
-    console.log('[DEBUG] Injected !important CSS styles into iframe head.');
-
-    console.log('%c[SUCCESS] BpwinViewer: Applied both attribute and forceful CSS fixes.', 'color: green; font-weight: bold;');
-
+    iframeDoc.head.appendChild(style);
   } catch (error) {
-    console.error('%c[ERROR] BpwinViewer: Failed during aggressive adjustment.', 'color: red; font-weight: bold;', error);
+    if (error.name !== 'SecurityError') {
+      console.error('Iframe adjustment failed:', error);
+    }
   }
 }
 </script>
 
 <template>
   <div class="bpwin-wrapper">
-    <div class="bpwin-header">
-      <button class="back-button" @click="goBack">
+    <header class="bpwin-header">
+      <button class="back-button" @click="goBack" type="button">
         ← Volver a Hardware
       </button>
-    </div>
+    </header>
     <div class="bpwin-container">
       <iframe ref="iframeRef" src="/Bpwin/Sample1.htm" class="bpwin-iframe" title="Bpwin Report"
-        @load="adjustIframeContent"></iframe>
+        @load="adjustIframeContent" />
     </div>
   </div>
 </template>
 
 <style scoped>
 .bpwin-wrapper {
-  width: 100%;
-  height: calc(100vh - 80px);
-  margin-left: -20px;
-  margin-right: -20px;
-  margin-top: -20px;
-  margin-bottom: -200px;
-  width: calc(100% + 40px);
   display: flex;
   flex-direction: column;
+  margin: -20px;
+  width: calc(100% + 40px);
+  height: calc(100vh - 80px);
+  overflow: hidden;
 }
 
 .bpwin-header {
-  background-color: #566782;
-  padding: 40px 20px 10px 20px;
-  /* top right bottom left */
   display: flex;
   justify-content: flex-end;
   flex-shrink: 0;
+  padding: 16px 20px;
+  background-color: #566782;
 }
 
 .back-button {
-  background-color: #27539B;
-  color: white;
-  font-size: 0.9em;
-  border-radius: 10px;
   padding: 8px 16px;
+  font-size: 0.9em;
+  color: white;
+  background-color: #27539B;
   border: none;
+  border-radius: 10px;
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -104,13 +101,13 @@ function adjustIframeContent() {
 
 .bpwin-container {
   flex: 1;
-  overflow: hidden;
+  min-height: 0;
 }
 
 .bpwin-iframe {
+  display: block;
   width: 100%;
   height: 100%;
   border: none;
-  display: block;
 }
 </style>
