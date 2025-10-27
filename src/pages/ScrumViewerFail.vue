@@ -6,23 +6,22 @@ const router = useRouter();
 const iframeRef = ref(null);
 
 // Your URL here
-const iframeUrl = 'https://app.smartsheet.com/workspaces/rQ6RJQm2pw7FV9qq7XQXWW97c3rrVgHCpgmM64g1'; // Replace with your URL
+const iframeUrl = 'https://app.smartsheet.com/workspaces/rQ6RJQm2pw7FV9qq7XQXWW97c3rrVgHCpgmM64g1';
 
-// Store original overflow value
 let originalOverflow = '';
+let originalMargin = '';
 
 onMounted(() => {
-    // Scroll to top first
     window.scrollTo(0, 0);
-
-    // Save current overflow and allow scroll
     originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'auto';
+    originalMargin = document.body.style.margin;
+    document.body.style.overflow = 'hidden';
+    document.body.style.margin = '0';
 });
 
 onBeforeUnmount(() => {
-    // Restore original overflow when leaving
     document.body.style.overflow = originalOverflow;
+    document.body.style.margin = originalMargin;
 });
 
 function goBack() {
@@ -69,7 +68,7 @@ function adjustIframeContent() {
         </header>
         <div class="bpwin-container">
             <div class="aspect-ratio-box">
-                <iframe ref="iframeRef" :src="iframeUrl" class="bpwin-iframe" title="Bpwin Report"
+                <iframe ref="iframeRef" :src="iframeUrl" class="bpwin-iframe" title="Smartsheet Report"
                     @load="adjustIframeContent" />
             </div>
         </div>
@@ -78,11 +77,16 @@ function adjustIframeContent() {
 
 <style scoped>
 .bpwin-wrapper {
+    position: fixed;
+    top: 80px;
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 80px);
     display: flex;
     flex-direction: column;
-    margin: -20px;
-    width: calc(100% + 40px);
-    min-height: calc(100vh - 80px);
+    overflow: hidden;
+    background-color: #2c3e50;
+    z-index: 100;
 }
 
 .bpwin-header {
@@ -110,17 +114,35 @@ function adjustIframeContent() {
 
 .bpwin-container {
     flex: 1;
+    min-height: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 20px;
+    overflow: hidden;
     background-color: #566782;
 }
 
-/* 16:9 Aspect Ratio Container */
 .aspect-ratio-box {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%;
-    /* 16:9 = 9/16 = 0.5625 = 56.25% */
+    max-width: 100%;
+    max-height: 100%;
+    aspect-ratio: 16 / 9;
     background-color: #000;
+}
+
+@supports not (aspect-ratio: 16 / 9) {
+    .aspect-ratio-box {
+        padding-bottom: 56.25%;
+        height: 0;
+    }
+
+    .aspect-ratio-box .bpwin-iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
 }
 
 .bpwin-iframe {
