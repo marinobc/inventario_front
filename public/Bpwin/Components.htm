@@ -1,30 +1,126 @@
-<HTML>
-<HEAD>
-<TITLE>
-Computer Associates's Report Template Builder - Sample1 Document
-</TITLE>
-</HEAD>
-<BODY>
-<BODY BGCOLOR=#800000 TEXT=#FFFFFF LINK=#FFFFFF VLINK=#FFFFFF ALINK=#9FCFFF>
-<P><A HREF='http://www.ca.com' TARGET=REPWINDOW><IMG src="company.jpeg"></A><P><P>&nbsp<P><P>&nbsp<P>
-<P><TABLE>
-<B><FONT FACE=Arial SIZE=2>Report Components:</FONT></B>
-<P><TABLE>
-<TR><TD ALIGN = LEFT>
-<FONT FACE=Arial SIZE=2>1. 'Picture' section
-</FONT></TD></TR>
-<TR><TD ALIGN = RIGHT>
-<A HREF = 1Picturesection0.htm TARGET=REPWINDOW><FONT FACE=Arial SIZE=2>A-0 Sistema orientado a la istalaci�n de Producto de Hardware
-</FONT></TD></TR>
-<TR><TD ALIGN = LEFT>
-<A HREF = 2ModelsectionTabLkd.htm TARGET=REPWINDOW><FONT FACE=Arial SIZE=2>2. 'Model' section
-</FONT></TD></TR>
-<TR><TD ALIGN = LEFT>
-<A HREF = 3ActivitysectionTabLkd.htm TARGET=REPWINDOW><FONT FACE=Arial SIZE=2>3. 'Activity' section
-</FONT></TD></TR>
-<TR><TD ALIGN = LEFT>
-<A HREF = 4ArrowsectionTabLkd.htm TARGET=REPWINDOW><FONT FACE=Arial SIZE=2>4. 'Arrow' section
-</FONT></TD></TR>
-</TABLE>
-</BODY>
-</HTML>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Departamento de Hardware</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      display: flex;
+      height: 100vh;
+      background-color: #bcd6f7; /* Fondo celeste */
+      color: #1a1a1a;
+    }
+
+    /* Barra lateral */
+    .sidebar {
+      width: 280px;
+      background-color: #7da6da;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidebar img {
+      width: 80px;
+      margin: 0 auto 10px;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      font-size: 1.2rem;
+      background-color: #f5e5c8;
+      color: #5b3921;
+      border-radius: 10px;
+      padding: 8px;
+      font-weight: 600;
+      margin-bottom: 25px;
+    }
+
+    .sidebar h3 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar li {
+      margin-bottom: 12px;
+    }
+
+    .sidebar a {
+      text-decoration: none;
+      color: white;
+      font-size: 0.95rem;
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 10px 15px;
+      border-radius: 8px;
+      display: block;
+      transition: background-color 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.35);
+    }
+
+    /* Contenido principal */
+    .main-content {
+      flex: 1;
+      padding: 40px 60px;
+      background-color: #bcd6f7;
+      position: relative;
+    }
+
+    /* Título grande, moderno y con animación */
+    .main-content h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      margin: 0;
+      margin-top: 40px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #123c69, #5b3921, #123c69);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shine 4s ease-in-out infinite;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    @keyframes shine {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <img src="LogoHagenCo.png" alt="Logo">
+    <h2>Recursos Hardware</h2>
+    <h3>Report Components:</h3>
+    <ul>
+      <li><a href="1Picturesection0.htm" target="REPWINDOW">1. 'Picture' section – A-0 Sistema orientado a la instalación de Producto de Hardware</a></li>
+      <li><a href="2ModelsectionTabLkd.htm" target="REPWINDOW">2. 'Model' section</a></li>
+      <li><a href="3ActivitysectionTabLkd.htm" target="REPWINDOW">3. 'Activity' section</a></li>
+      <li><a href="4ArrowsectionTabLkd.htm" target="REPWINDOW">4. 'Arrow' section</a></li>
+    </ul>
+  </aside>
+
+  <main class="main-content">
+    <h1>Departamento de Hardware</h1>
+  </main>
+</body>
+</html>
