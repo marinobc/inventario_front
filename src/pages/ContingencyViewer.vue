@@ -35,7 +35,7 @@ function goBack() {
     <div class="bpwin-container">
       <div class="aspect-ratio-box">
         <iframe
-          src="https://drive.google.com/file/d/10vXBxoBUDShMpjf_XsOvjK2Y-57no61v/view?usp=sharing"
+          src="https://drive.google.com/file/d/10vXBxoBUDShMpjf_XsOvjK2Y-57no61v/view?usp=drive_link"
           class="bpwin-iframe"
           title="Google Sheets Report"
         />
