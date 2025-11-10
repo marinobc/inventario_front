@@ -324,6 +324,12 @@ onMounted(() => {
             Presupuesto
           </BaseButton>
         </RouterLink>
+
+        <RouterLink :to="{ name: 'contingency' }">
+          <BaseButton class="btnNuevo" variant="primary">
+            Plan de Contingencia
+          </BaseButton>
+        </RouterLink>
       </div>
     </template>
 

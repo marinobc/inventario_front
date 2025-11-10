@@ -9,6 +9,7 @@ import Profile from "../pages/Profile.vue";
 import ScrumViewer from "@/pages/ScrumViewer.vue";
 import ScrumViewerFail from "@/pages/ScrumViewerFail.vue";
 import BudgetViewer from "@/pages/BudgetViewer.vue";
+import ContingencyViewer from "@/pages/ContingencyViewer.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -53,6 +54,13 @@ const router = createRouter({
       path: "/budget",
       name: "budget",
       component: BudgetViewer,
+      meta: { requiresAuth: true },
+    },
+
+    {
+      path: "/contingency",
+      name: "contingency",
+      component: ContingencyViewer,
       meta: { requiresAuth: true },
     },
 
