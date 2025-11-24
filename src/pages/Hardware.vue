@@ -9,6 +9,8 @@ import AlertMessage from "@/components/common/AlertMessage.vue";
 import BaseButton from "@/components/common/BaseButton.vue";
 import ConfirmDeleteModal from "@/components/common/ConfirmDeleteModal.vue";
 import bannerHardwareImage from "@/assets/bannerhardware.png";
+import { usePagination } from "@/composables/usePagination";
+import { useSorting } from "@/composables/useSorting";
 
 function debounce(fn, wait) {
   let timeout;
@@ -96,6 +98,9 @@ const filteredHardwareItems = computed(() => {
   );
 });
 
+const { sortedItems, sortKey, sortOrder, sortBy } = useSorting(filteredHardwareItems);
+const { paginatedItems, currentPage, totalPages, setPage } = usePagination(sortedItems, 10);
+
 const debouncedSearch = debounce((value) => {
   searchQuery.value = value;
   filters.value.search = value;
@@ -152,8 +157,10 @@ function clearFilters() {
   console.log("HardwarePage:clearFilters:Filters reset");
 }
 
-function downloadCSV() {
-  const dataToExport = filteredHardwareItems.value;
+async function downloadCSV() {
+  console.log("HardwarePage:downloadCSV:Called");
+  const dataToExport = sortedItems.value;
+  console.log("HardwarePage:downloadCSV:Items to export:", dataToExport?.length);
 
   if (!dataToExport || dataToExport.length === 0) {
     alert("No hay datos para exportar.");
@@ -167,31 +174,69 @@ function downloadCSV() {
     keys
       .map((key) => {
         let val = item[key];
+
+        // Handle specific formatting
         if (key === "fecha_mantenimiento" || key === "fecha_baja") {
-          val = val ? new Date(val).toLocaleDateString() : "N/A";
+          if (val) {
+            const date = new Date(val);
+            val = !isNaN(date.getTime()) ? date.toLocaleDateString() : val;
+          } else {
+            val = "N/A";
+          }
+        } else if (key === "costo") {
+          val = val !== null && val !== undefined ? Number(val).toFixed(2) : "";
         }
-        if (key === "costo") {
-          val = Number(val).toFixed(2);
-        }
-        return `"${(val ?? "").toString().replace(/"/g, '""')}"`; // Escapar comillas
+
+        // Handle null/undefined and escape quotes
+        const strVal = (val ?? "").toString().replace(/"/g, '""');
+        return `"${strVal}"`;
       })
       .join(",")
   );
 
   const csvContent = [headers.join(","), ...rows].join("\n");
 
-  // ✅ UTF-8 con BOM
+  // Fallback: Copy to clipboard first (most reliable in sandbox if allowed)
+  let clipboardSuccess = false;
+  try {
+    await navigator.clipboard.writeText(csvContent);
+    clipboardSuccess = true;
+    console.log("HardwarePage:downloadCSV: Copied to clipboard");
+  } catch (err) {
+    console.warn("HardwarePage:downloadCSV: Clipboard write failed", err);
+  }
+
+  // Primary: Attempt download
   const blob = new Blob(["\uFEFF" + csvContent], {
     type: "text/csv;charset=utf-8;",
   });
   const url = URL.createObjectURL(blob);
 
   const link = document.createElement("a");
-  link.href = url;
+  link.setAttribute("href", url);
   link.setAttribute("download", "inventario_hardware.csv");
+  link.setAttribute("target", "_blank"); // Helps with some sandbox restrictions
+  link.style.visibility = "hidden";
   document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  
+  try {
+    link.click();
+  } catch (e) {
+    console.error("HardwarePage:downloadCSV: Link click failed", e);
+  }
+
+  // Notify user
+  if (clipboardSuccess) {
+    alert("Se ha intentado descargar el archivo. Si la descarga falla por restricciones del navegador, los datos han sido copiados al portapapeles.");
+  } else {
+    // If clipboard failed too, maybe show a modal? For now, just alert.
+    // alert("Intentando descargar archivo...");
+  }
+
+  setTimeout(() => {
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }, 2000);
 }
 
 async function handleSave() {
@@ -417,9 +462,18 @@ onMounted(() => {
 
     <AlertMessage type="danger" :message="error" />
 
-    <DataTable :items="filteredHardwareItems" :columns="tableColumns" :is-loading="isLoading" :actions-visible="authStore.permissions.hardware?.canUpdate ||
-      authStore.permissions.hardware?.canDelete
-      ">
+    <DataTable 
+      :items="paginatedItems" 
+      :columns="tableColumns" 
+      :is-loading="isLoading" 
+      :actions-visible="authStore.permissions.hardware?.canUpdate || authStore.permissions.hardware?.canDelete"
+      :sort-key="sortKey"
+      :sort-order="sortOrder"
+      :current-page="currentPage"
+      :total-pages="totalPages"
+      @sort="sortBy"
+      @page-change="setPage"
+    >
       <template #cell-fecha_mantenimiento="{ item }">
         {{ new Date(item.fecha_mantenimiento).toLocaleDateString() }}
       </template>
